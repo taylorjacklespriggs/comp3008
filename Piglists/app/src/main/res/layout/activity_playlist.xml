@@ -10,8 +10,42 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.comp3008.piglists.PlaylistActivity">
 
-    <TextView
-        android:text="Hello World!"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <HorizontalScrollView android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:id="@+id/horizontalScrollView"
+        android:background="@drawable/scrollviewborder">
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/horizontalScrollView"
+            android:layout_alignParentStart="true"
+            android:paddingBottom="5dp">
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scrollHorizontally="true"
+                android:text="Playlists"
+                android:paddingRight="10dp"/>
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scrollHorizontally="true"
+                android:text="Recommended"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"/>
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scrollHorizontally="true"
+                android:text="Top 100"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"/>
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scrollHorizontally="true"
+                android:text="Guest Favourites"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"/>
+        </GridLayout>
+
+    </HorizontalScrollView>
+
 </RelativeLayout>
