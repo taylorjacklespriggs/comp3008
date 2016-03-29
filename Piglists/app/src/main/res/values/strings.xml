@@ -7,4 +7,10 @@
 
     <string name="action_settings">Settings</string>
     <string name="hint">Search</string>
+    <string name="newEvent">New Event</string>
+    <string name="connect">Connect</string>
+    <string name="joinEvent">Join Event</string>
+    <string name="manageGuests">Manage Guests</string>
+    <string name="myPlaylists">My Playlists</string>
+    <string name="sharPlaylist">Share a Playlist</string>
 </resources>
