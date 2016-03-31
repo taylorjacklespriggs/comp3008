@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.comp3008.piglists.dummy.PlayList;
+import com.comp3008.piglists.model.PlayList;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class MyPlaylistRecyclerViewAdapter extends RecyclerView.Adapter<MyPlayli
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(String.valueOf(mValues.get(position).id));
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mContentView.setText(mValues.get(position).detail());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

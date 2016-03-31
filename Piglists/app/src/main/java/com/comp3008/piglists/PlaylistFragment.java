@@ -10,8 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.comp3008.piglists.dummy.PlayList;
-import com.comp3008.piglists.dummy.PlayListStructure;
+import com.comp3008.piglists.model.PlayList;
+import com.comp3008.piglists.model.PlayListStructure;
 
 /**
  * A fragment representing a list of Items.

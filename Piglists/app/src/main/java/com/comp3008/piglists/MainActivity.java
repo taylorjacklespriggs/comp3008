@@ -10,7 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.comp3008.piglists.dummy.PlayList;
+import com.comp3008.piglists.model.PlayList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PlaylistFragment.OnListFragmentInteractionListener {
 
