@@ -1,5 +1,6 @@
 package com.comp3008.piglists.model;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -22,7 +23,7 @@ public class PlayList {
     }
     private String title;
     public int id;
-    private ArrayList<SongWrapper> songs;
+    public List<SongWrapper> songs;
 
     public PlayList(int id, String title){
         this.title = title;
