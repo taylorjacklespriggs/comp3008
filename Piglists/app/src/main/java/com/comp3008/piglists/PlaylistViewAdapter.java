@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.comp3008.piglists.model.PlayList;
@@ -15,12 +16,12 @@ import java.util.List;
  * specified {@link PlaylistFragment.OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyPlaylistRecyclerViewAdapter extends RecyclerView.Adapter<MyPlaylistRecyclerViewAdapter.ViewHolder> {
+public class PlaylistViewAdapter extends RecyclerView.Adapter<PlaylistViewAdapter.ViewHolder> {
 
     private final List<PlayList> mValues;
     private final PlaylistFragment.OnListFragmentInteractionListener mListener;
 
-    public MyPlaylistRecyclerViewAdapter(List<PlayList> items, PlaylistFragment.OnListFragmentInteractionListener listener) {
+    public PlaylistViewAdapter(List<PlayList> items, PlaylistFragment.OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -34,9 +35,10 @@ public class MyPlaylistRecyclerViewAdapter extends RecyclerView.Adapter<MyPlayli
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(String.valueOf(mValues.get(position).id));
-        holder.mContentView.setText(mValues.get(position).detail());
+        PlayList playList = mValues.get(position);
+        holder.mItem = playList;
+        holder.mIdView.setText(String.valueOf(playList.id));
+        //holder.mContentView.setAdapter();
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,19 +60,38 @@ public class MyPlaylistRecyclerViewAdapter extends RecyclerView.Adapter<MyPlayli
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
-        public final TextView mContentView;
+        public final ListView mContentView;
         public PlayList mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mContentView = (ListView) view.findViewById(R.id.content);
+            //mContentView.setAdapter(new PlayListAdapter());
+        }
+    }
+
+    public class PlayListAdapter extends RecyclerView.Adapter<SongWrapperViewHolder> {
+        PlayList playList;
+        public PlayListAdapter() {
+            playList = null;
         }
 
         @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+        public SongWrapperViewHolder onCreateViewHolder(ViewGroup parent, int index) {
+            return new SongWrapperViewHolder(parent, playList.songs.get(index));
+        }
+
+        @Override
+        public void onBindViewHolder(SongWrapperViewHolder holder, int position) {
+            playList = mValues.get(position);
+            //holder
+        }
+
+        @Override
+        public int getItemCount() {
+            return playList.songs.size();
         }
     }
 }
