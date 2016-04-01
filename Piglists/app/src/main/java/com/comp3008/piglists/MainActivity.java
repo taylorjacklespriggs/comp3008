@@ -14,10 +14,14 @@ import android.support.v7.widget.Toolbar;
 import android.text.GetChars;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
+import com.comp3008.piglists.model.Guest;
 import com.comp3008.piglists.model.PlayList;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PlaylistFragment.OnListFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PlaylistFragment.OnListFragmentInteractionListener, GuestFragment.OnGuestSelectListener {
 
     boolean isConnected;
 
@@ -142,7 +146,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onListFragmentInteraction(PlayList item) {
         Log.i("MainActivity", "playlist selected: " + item.toString());
     }
+    @Override
+    public void onGuestSelected(Guest item){
+// custom dialog
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.guest_dialog);
+        dialog.setTitle(item.id);
 
+        // set the custom dialog components - text, image and button
+        TextView text = (TextView) dialog.findViewById(R.id.guestName);
+        text.setText(item.getDescription());
+
+        Button btnOK = (Button) dialog.findViewById(R.id.btnOk);
+        Button btnKick = (Button) dialog.findViewById(R.id.btnKickOut);
+        // if button is clicked, close the custom dialog
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        btnKick.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
     private class ConnectingToEventTask extends AsyncTask<TaskParams, Integer, Boolean> {
         AlertDialog.Builder builder;
         AlertDialog dialog;
