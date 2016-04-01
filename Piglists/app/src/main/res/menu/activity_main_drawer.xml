@@ -23,7 +23,7 @@
                 android:title="@string/myPlaylists" />
             <item
                 android:id="@+id/nav_new_playlist"
-                android:title="New Playlist" />
+                android:title="@string/newPlaylist" />
             <item
                 android:id="@+id/nav_share_playlist"
                 android:title="@string/sharPlaylist" />
