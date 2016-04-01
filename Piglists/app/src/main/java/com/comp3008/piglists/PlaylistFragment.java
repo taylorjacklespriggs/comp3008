@@ -67,7 +67,7 @@ public class PlaylistFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyPlaylistRecyclerViewAdapter(PlayListStructure.ITEMS, mListener));
+            recyclerView.setAdapter(new PlaylistView(PlayListStructure.ITEMS, mListener));
         }
         return view;
     }
