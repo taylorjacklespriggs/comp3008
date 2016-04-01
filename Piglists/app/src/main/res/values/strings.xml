@@ -13,4 +13,5 @@
     <string name="manageGuests">Manage Guests</string>
     <string name="myPlaylists">My Playlists</string>
     <string name="sharPlaylist">Share a Playlist</string>
+    <string name="newPlaylist">New Playlist</string>
 </resources>
