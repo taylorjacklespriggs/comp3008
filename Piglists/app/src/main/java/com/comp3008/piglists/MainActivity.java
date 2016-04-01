@@ -121,7 +121,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_join_event) {
 
         } else if (id == R.id.nav_manage_guests) {
-
+            GuestFragment guestFragment = new GuestFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, guestFragment).addToBackStack("").commit();
         } else if (id == R.id.nav_my_playlists) {
 
         } else if (id == R.id.nav_new_event) {
