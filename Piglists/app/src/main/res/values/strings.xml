@@ -9,6 +9,7 @@
     <string name="hint">Search</string>
     <string name="newEvent">New Event</string>
     <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
     <string name="joinEvent">Join Event</string>
     <string name="manageGuests">Manage Guests</string>
     <string name="myPlaylists">My Playlists</string>
@@ -17,4 +18,8 @@
 
     <string name="connectingDialog">Connecting...</string>
     <string name="connectingDialogCancel">Cancel</string>
+    <string name="connectingDialogConfirm">You\'ve successfully connected.</string>
+
+    <string name="disconnectingDialog">You\'ve been disconnected.</string>
+    <string name="ok">Ok</string>
 </resources>

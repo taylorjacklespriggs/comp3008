@@ -2,7 +2,6 @@ package com.comp3008.piglists;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,14 +11,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.GetChars;
 import android.util.Log;
 import android.view.MenuItem;
-import android.webkit.DownloadListener;
 
 import com.comp3008.piglists.model.PlayList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PlaylistFragment.OnListFragmentInteractionListener {
-    Boolean isConnected = false;
+
+    boolean isConnected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -83,27 +82,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_connect) {
-            final ConnectingToEventTask task = new ConnectingToEventTask();
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setMessage(R.string.connectingDialog);
-            builder.setNeutralButton(R.string.connectingDialogCancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (which == Dialog.BUTTON_NEUTRAL) {
-                        dialog.cancel();
+
+            if (isConnected){
+                item.setIcon(R.drawable.red_x);
+                item.setTitle(R.string.connect);
+                builder.setMessage(R.string.disconnectingDialog);
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        isConnected = false;
+                        dialog.dismiss();
                     }
-                }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    task.cancel(true);
-                }
-            });
-            dialog.show();
-            task.execute(dialog);
+                });
+                builder.create().show();
+            }else {
+                final ConnectingToEventTask task = new ConnectingToEventTask();
+                builder.setMessage(R.string.connectingDialog);
+                builder.setPositiveButton(R.string.connectingDialogCancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == Dialog.BUTTON_NEUTRAL) {
+                            dialog.cancel();
+                        }
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        task.cancel(true);
+                    }
+                });
+                dialog.show();
+                task.execute(new TaskParams(builder, dialog, item));
+            }
         } else if (id == R.id.nav_join_event) {
 
         } else if (id == R.id.nav_manage_guests) {
@@ -128,11 +142,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.i("MainActivity", "playlist selected: " + item.toString());
     }
 
-    private class ConnectingToEventTask extends AsyncTask<AlertDialog, Integer, Boolean> {
+    private class ConnectingToEventTask extends AsyncTask<TaskParams, Integer, Boolean> {
+        AlertDialog.Builder builder;
         AlertDialog dialog;
+        MenuItem item;
 
-        protected Boolean doInBackground(AlertDialog... params){
-            this.dialog = params[0];
+        protected Boolean doInBackground(TaskParams... params){
+            this.builder = params[0].builder;
+            this.dialog = params[0].dialog;
+            this.item = params[0].item;
+
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException ex) {
@@ -142,13 +161,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         protected void onPostExecute(Boolean result){
-            if (!isCancelled()) {
-                isConnected = true;
-            }else {
-                isConnected = false;
-            }
+            isConnected = true;
+            item.setIcon(R.drawable.checkmark_green);
+            item.setTitle(R.string.disconnect);
 
             dialog.dismiss();
+
+            builder.setMessage(R.string.connectingDialogConfirm);
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            builder.create().show();
+        }
+    }
+
+    private class TaskParams {
+        AlertDialog.Builder builder;
+        AlertDialog dialog;
+        MenuItem item;
+
+        TaskParams(AlertDialog.Builder b, AlertDialog d, MenuItem i) {
+            builder = b;
+            dialog = d;
+            item = i;
         }
     }
 }

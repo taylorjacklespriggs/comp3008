@@ -4,7 +4,8 @@
     <group android:checkableBehavior="single" android:title="Connections">
         <item
             android:id="@+id/nav_connect"
-            android:title="@string/connect" />
+            android:title="@string/connect"
+            android:icon="@drawable/red_x" />
         <item
             android:id="@+id/nav_new_event"
             android:title="@string/newEvent" />
