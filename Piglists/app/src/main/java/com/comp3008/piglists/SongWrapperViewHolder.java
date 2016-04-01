@@ -14,13 +14,14 @@ public class SongWrapperViewHolder extends RecyclerView.ViewHolder {
 
     PlayList.SongWrapper song;
     public final View mView;
-    //public final SongViewHolder songView;
-    //public final ListView mContentView;
+    //public final ListView songView;
+    //public final TextView voteView;
     public PlayList mItem;
 
     public SongWrapperViewHolder(View view, PlayList.SongWrapper song) {
         super(view);
         mView = view;
-        //songView = new SongViewHolder(song.song);
+        //songView = (ListView) mView.findViewById(R.id.song);
+        //voteView = (ListView) mView.findViewById(R.id.vote);
     }
 }

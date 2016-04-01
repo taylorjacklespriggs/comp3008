@@ -16,12 +16,12 @@ import java.util.List;
  * specified {@link PlaylistFragment.OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class SonglistView extends RecyclerView.Adapter<SonglistView.SongViewHolder> {
+public class SonglistViewAdapter extends RecyclerView.Adapter<SonglistViewAdapter.SongViewHolder> {
 
     private final List<Song> myList;
     private final PlaylistFragment.OnListFragmentInteractionListener mListener;
 
-    public SonglistView(List<Song> pl, PlaylistFragment.OnListFragmentInteractionListener listener) {
+    public SonglistViewAdapter(List<Song> pl, PlaylistFragment.OnListFragmentInteractionListener listener) {
         myList = pl;
         mListener = listener;
     }
