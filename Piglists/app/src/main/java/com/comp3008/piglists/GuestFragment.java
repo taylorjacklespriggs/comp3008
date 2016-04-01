@@ -102,6 +102,6 @@ public class GuestFragment extends Fragment {
      */
     public interface OnGuestSelectListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Guest item);
+        void onGuestSelected(Guest item);
     }
 }

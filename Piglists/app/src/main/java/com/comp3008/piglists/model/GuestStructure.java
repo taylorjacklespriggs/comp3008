@@ -25,6 +25,16 @@ public class GuestStructure {
 
     private static final int COUNT = 25;
 
+    static{
+        //create sample guests
+        addItem(new Guest("Elyas Syoufi"));
+        addItem(new Guest("Harry Potter"));
+        addItem(new Guest("Taylor J Spriggs"));
+        addItem(new Guest("Water Mellon"));
+        addItem(new Guest("Christopher Charron"));
+        addItem(new Guest("Dark Roast"));
+        addItem(new Guest("Super Man"));
+    }
     private static void addItem(Guest item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
