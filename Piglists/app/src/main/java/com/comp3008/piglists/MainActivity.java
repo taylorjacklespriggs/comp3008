@@ -1,5 +1,10 @@
 package com.comp3008.piglists;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -9,10 +14,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.webkit.DownloadListener;
 
 import com.comp3008.piglists.model.PlayList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PlaylistFragment.OnListFragmentInteractionListener {
+    Boolean isConnected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +83,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_connect) {
-            // Handle the camera action
+            final ConnectingToEventTask task = new ConnectingToEventTask();
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setMessage(R.string.connectingDialog);
+            builder.setNeutralButton(R.string.connectingDialogCancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (which == Dialog.BUTTON_NEUTRAL) {
+                        dialog.cancel();
+                    }
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    task.cancel(true);
+                }
+            });
+            dialog.show();
+            task.execute(dialog);
         } else if (id == R.id.nav_join_event) {
 
         } else if (id == R.id.nav_manage_guests) {
@@ -99,5 +126,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onListFragmentInteraction(PlayList item) {
         Log.i("MainActivity", "playlist selected: " + item.toString());
+    }
+
+    private class ConnectingToEventTask extends AsyncTask<AlertDialog, Integer, Boolean> {
+        AlertDialog dialog;
+
+        protected Boolean doInBackground(AlertDialog... params){
+            this.dialog = params[0];
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                // do nothing
+            }
+            return true;
+        }
+
+        protected void onPostExecute(Boolean result){
+            if (!isCancelled()) {
+                isConnected = true;
+            }else {
+                isConnected = false;
+            }
+
+            dialog.dismiss();
+        }
     }
 }

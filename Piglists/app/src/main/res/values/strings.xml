@@ -14,4 +14,7 @@
     <string name="myPlaylists">My Playlists</string>
     <string name="sharPlaylist">Share a Playlist</string>
     <string name="newPlaylist">New Playlist</string>
+
+    <string name="connectingDialog">Connecting...</string>
+    <string name="connectingDialogCancel">Cancel</string>
 </resources>
