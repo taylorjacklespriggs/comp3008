@@ -93,7 +93,6 @@ public class PlaylistViewAdapter
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            System.out.println("Getting PlayListAdapter view "+position);
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View rowView = inflater.inflate(R.layout.view_song_wrapper, parent, false);
