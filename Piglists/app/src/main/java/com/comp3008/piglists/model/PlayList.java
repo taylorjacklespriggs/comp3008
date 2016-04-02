@@ -37,7 +37,7 @@ public class PlayList {
         int max = rand.nextInt((260 - 56) + 1) + 56;
         for(int i = 0; i < max; i++){
             songs.add(new SongWrapper(
-                    new Song("Song " + i, "Author " + i,i ,i %2 == 0? "Rock" : "EDM"),
+                    new Song("Song " + i, "Author " + i, i %2 == 0? "Rock" : "EDM"),
                     (int)(Math.random()*10)));
         }
     }

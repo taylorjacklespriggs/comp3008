@@ -16,29 +16,29 @@ import java.util.List;
  * specified {@link PlaylistFragment.OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class SonglistViewAdapter extends RecyclerView.Adapter<SonglistViewAdapter.SongViewHolder> {
+public class SongWrapperListViewAdapter
+        extends RecyclerView.Adapter<SongWrapperViewHolder> {
 
-    private final List<Song> myList;
+    private final List<PlayList.SongWrapper> myList;
     private final PlaylistFragment.OnListFragmentInteractionListener mListener;
 
-    public SonglistViewAdapter(List<Song> pl, PlaylistFragment.OnListFragmentInteractionListener listener) {
+    public SongWrapperListViewAdapter(List<PlayList.SongWrapper> pl,
+                                      PlaylistFragment.OnListFragmentInteractionListener listener) {
         myList = pl;
         mListener = listener;
     }
 
     @Override
-    public SongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SongWrapperViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_playlist, parent, false);
-        return new SongViewHolder(view);
+        return new SongWrapperViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final SongViewHolder holder, int position) {
-        Song song = myList.get(position);
-        holder.mItem = song;
-        holder.mTitleView.setText(song.toString());
-        //holder.mContentView.setText(myList.get(position).detail());
+    public void onBindViewHolder(final SongWrapperViewHolder holder, int position) {
+        PlayList.SongWrapper song = myList.get(position);
+        holder.setSongWrapper(song);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,22 +55,5 @@ public class SonglistViewAdapter extends RecyclerView.Adapter<SonglistViewAdapte
     @Override
     public int getItemCount() {
         return myList.size();
-    }
-
-    public class SongViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mTitleView;
-        //public final TextView mAuthorView;
-        //public final TextView mGenreView;
-        public Song mItem;
-
-        public SongViewHolder(View view) {
-            super(view);
-            mView = view;
-            mTitleView = (TextView) view.findViewById(R.id.title);
-            //mAuthorView = (TextView) view.findViewById(R.id.author);
-            //mGenreView = (TextView) view.findViewById(R.id.genre);
-            //mItem = s;
-        }
     }
 }

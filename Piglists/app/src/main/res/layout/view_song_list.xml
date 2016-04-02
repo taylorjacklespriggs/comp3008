@@ -10,4 +10,4 @@
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.comp3008.piglists.SongFragment"
-    tools:listitem="@layout/fragment_song" />
+    tools:listitem="@layout/view_song" />

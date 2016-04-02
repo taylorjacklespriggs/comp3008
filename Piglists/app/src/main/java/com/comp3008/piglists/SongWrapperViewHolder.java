@@ -10,18 +10,19 @@ import com.comp3008.piglists.model.PlayList;
 /**
  * Created by taylor on 4/1/16.
  */
-public class SongWrapperViewHolder extends RecyclerView.ViewHolder {
+public class SongWrapperViewHolder extends SongViewHolder {
 
-    PlayList.SongWrapper song;
-    public final View mView;
-    //public final ListView songView;
-    //public final TextView voteView;
-    public PlayList mItem;
+    private PlayList.SongWrapper wrapper;
+    public final TextView mVoteView;
 
-    public SongWrapperViewHolder(View view, PlayList.SongWrapper song) {
+    public SongWrapperViewHolder(View view) {
         super(view);
-        mView = view;
-        //songView = (ListView) mView.findViewById(R.id.song);
-        //voteView = (ListView) mView.findViewById(R.id.vote);
+        mVoteView = (TextView) mView.findViewById(R.id.votes);
+    }
+
+    public void setSongWrapper(PlayList.SongWrapper wrap) {
+        wrapper = wrap;
+        //mVoteView.setText(wrap.votes);
+        setSong(wrap.song);
     }
 }
