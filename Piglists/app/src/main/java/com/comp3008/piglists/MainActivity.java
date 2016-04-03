@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity
         dialog.show();
     }
 public void onListFragmentInteraction(Song item){
-
+    Log.i("MainActivity", "song selected: " + item.getTitle());
 }
     private class ConnectingToEventTask extends AsyncTask<TaskParams, Integer, Boolean> {
         AlertDialog.Builder builder;

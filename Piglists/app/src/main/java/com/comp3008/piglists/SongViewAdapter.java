@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.comp3008.piglists.model.Song;
@@ -68,6 +69,25 @@ public class SongViewAdapter extends RecyclerView.Adapter<SongViewAdapter.ViewHo
             mTitle = (TextView) view.findViewById(R.id.txtSongName);
             mAuthor = (TextView) view.findViewById(R.id.txtSongAuthor);
             mVotes = (TextView) view.findViewById(R.id.txtVote);
+            Button mUp = (Button) view.findViewById(R.id.btnVoteUp);
+            Button mDown = (Button) view.findViewById(R.id.btnVoteDown);
+            mUp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TextView votes = mVotes;
+                    mItem.onUpVote();
+                    votes.setText("" + mItem.getVotes());
+                }
+            });
+            mDown.setOnClickListener(new View.OnClickListener() {
+                TextView votes = mVotes;
+                @Override
+                public void onClick(View v) {
+                    mItem.onDownVote();
+                    votes.setText("" + mItem.getVotes());
+                }
+            });
+
         }
 
         @Override

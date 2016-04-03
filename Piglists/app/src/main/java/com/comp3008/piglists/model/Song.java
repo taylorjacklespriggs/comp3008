@@ -1,5 +1,7 @@
 package com.comp3008.piglists.model;
 
+import android.widget.TextView;
+
 import java.util.Random;
 
 /**
@@ -11,6 +13,7 @@ public class Song {
     private String author;
     private String genre;
     private int votes;
+    private TextView voteView;
 
     public Song(){
 
@@ -39,5 +42,12 @@ public class Song {
 
     public int getVotes(){
         return this.votes;
+    }
+
+    public void onUpVote() {
+        votes++;
+    }
+    public void onDownVote(){
+        votes--;
     }
 }
