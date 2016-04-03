@@ -23,29 +23,12 @@ import android.widget.TextView;
 
 import com.comp3008.piglists.model.Guest;
 import com.comp3008.piglists.model.PlayList;
-import com.comp3008.piglists.model.PlayListStructure;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        DisplayPlayListsFragment.OnDisplayPlayListsFragmentInteractionListener,
-        PlayListFragment.OnPlayListFragmentInteractionListener,
         GuestFragment.OnGuestSelectListener {
 
-    public static final String MY_PLAYLISTS_ID = "my-playlists";
-    public static final String MANAGE_GUESTS_ID = "manage-guests";
-
     boolean isConnected;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
-
-    private DisplayPlayListsFragment myPlayListsFragment;
-    private GuestFragment manageGuestsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,43 +47,12 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        myPlayListsFragment = DisplayPlayListsFragment.newInstance(1);
-        manageGuestsFragment = GuestFragment.newInstance(1);
+        //myPlayListsFragment = new DisplayPlayListsFragment();
 
         //add the playlist fragment to start with
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, myPlayListsFragment, MY_PLAYLISTS_ID)
-                .commit();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-    }
-
-    private void showMyPlayLists() {
-        replaceFragment(myPlayListsFragment);
-    }
-
-    private void showManageGuests() {
-        replaceFragmentToStack(manageGuestsFragment, MANAGE_GUESTS_ID);
-    }
-
-    private void showPlayList(PlayList pl) {
-        PlayListFragment plFragment =
-                PlayListFragment.newInstance(1, pl);
-        replaceFragmentToStack(plFragment, pl.toString());
-    }
-
-    private void replaceFragment(Fragment f) {
-        FragmentManager fm = getSupportFragmentManager();
-        final FragmentTransaction transaction = fm.beginTransaction();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, f).commit();
-    }
-
-    private void replaceFragmentToStack(Fragment f, String id) {
-        FragmentManager fm = getSupportFragmentManager();
-        final FragmentTransaction transaction = fm.beginTransaction();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, f)
-                .addToBackStack(id).commit();
+        /*getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, myPlayListsFragment)
+                .commit();*/
     }
 
     @Override
@@ -183,9 +135,14 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_join_event) {
 
         } else if (id == R.id.nav_manage_guests) {
-            showManageGuests();
+            GuestFragment guestFragment = new GuestFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, guestFragment)
+                    .addToBackStack("").commit();
+
         } else if (id == R.id.nav_my_playlists) {
-            showMyPlayLists();
+            //DisplayPlayListsFragment playlists = new DisplayPlayListsFragment();
+            //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, playlists)
+                   // .addToBackStack("").commit();
         } else if (id == R.id.nav_new_event) {
 
         } else if (id == R.id.nav_new_playlist) {
@@ -197,17 +154,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    public void onDisplayPlayListsFragmentInteraction(PlayList item) {
-        Log.i("MainActivity", "playlist selected: " + item.toString());
-        showPlayList(item);
-    }
-
-    @Override
-    public void onPlayListFragmentInteraction(PlayList.SongWrapper item) {
-        Log.i("MainActivity", "playlist selected: " + item.toString());
     }
 
     @Override
@@ -238,46 +184,6 @@ public class MainActivity extends AppCompatActivity
         });
 
         dialog.show();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Main Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.comp3008.piglists/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Main Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.comp3008.piglists/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
     }
 
     private class ConnectingToEventTask extends AsyncTask<TaskParams, Integer, Boolean> {
