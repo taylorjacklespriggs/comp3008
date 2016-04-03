@@ -2,6 +2,7 @@ package com.comp3008.piglists;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -25,7 +26,7 @@ import com.comp3008.piglists.model.Guest;
 import com.comp3008.piglists.model.PlayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
+        implements NavigationView.OnNavigationItemSelectedListener,PlayListFragment.OnPlayListInteractionListener,
         GuestFragment.OnGuestSelectListener {
 
     boolean isConnected;
@@ -47,12 +48,12 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //myPlayListsFragment = new DisplayPlayListsFragment();
+        PlayListFragment myPlayListsFragment = new PlayListFragment();
 
         //add the playlist fragment to start with
-        /*getSupportFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, myPlayListsFragment)
-                .commit();*/
+                .commit();
     }
 
     @Override
@@ -155,7 +156,9 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+    public void onListFragmentInteraction(PlayList item){
 
+    }
     @Override
     public void onGuestSelected(Guest item) {
 // custom dialog

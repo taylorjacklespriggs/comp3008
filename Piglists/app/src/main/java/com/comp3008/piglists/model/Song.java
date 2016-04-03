@@ -6,6 +6,7 @@ import java.util.Random;
  * Created by elyas on 3/29/2016.
  */
 public class Song {
+    public String id;
     private String title;
     private String author;
     private String genre;
@@ -15,7 +16,7 @@ public class Song {
 
     }
 
-    public Song(String title, String author, String genre){
+    public Song(String id, String title, String author, String genre){
         this.title = title;
         this.author = author;
         this.genre = genre;
