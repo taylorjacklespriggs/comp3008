@@ -8,12 +8,40 @@ import java.util.Random;
 public class Guest {
     public String id = "Fred";
     private String description = "Joined 25 min ago.";
+    private boolean isAbleToMakeSuggestions = true;
+    private boolean isAbleToVote = true;
+
 
     public Guest(String name){
         this.id = name;
+        int min = (new Random()).nextInt(60);
+        description = "Joined " + min + " min ago.";
     }
     public String getDescription(){
-        int min = (new Random()).nextInt(60);
-        return "Joined " + min + " min ago.";
+        return description;
+    }
+
+    public boolean canVote() {
+        return isAbleToVote;
+    }
+
+    public boolean canSuggest() {
+        return isAbleToMakeSuggestions;
+    }
+
+    public void banVote() {
+        isAbleToVote = false;
+    }
+
+    public void banSuggestions() {
+        isAbleToMakeSuggestions = false;
+    }
+
+    public void enableVote() {
+        isAbleToVote = true;
+    }
+
+    public void enableSuggestions() {
+        isAbleToMakeSuggestions = true;
     }
 }

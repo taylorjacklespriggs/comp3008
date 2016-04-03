@@ -39,4 +39,9 @@ public class GuestStructure {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
     }
+
+    public static void removeItem(Guest item) {
+        ITEMS.remove(item);
+        ITEM_MAP.remove(item.id);
+    }
 }

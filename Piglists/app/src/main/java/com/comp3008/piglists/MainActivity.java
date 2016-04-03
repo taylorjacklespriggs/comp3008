@@ -17,13 +17,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.comp3008.piglists.model.Guest;
+import com.comp3008.piglists.model.GuestStructure;
 import com.comp3008.piglists.model.PlayList;
 import com.comp3008.piglists.model.Song;
 
@@ -167,33 +170,46 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, songFragment)
                 .addToBackStack("").commit();
     }
+
     @Override
-    public void onGuestSelected(Guest item) {
-// custom dialog
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.guest_dialog);
-        dialog.setTitle(item.id);
+    public void onGuestSelected(final Guest item) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+        final View guestDialogView = inflater.inflate(R.layout.guest_dialog, null);
 
-        // set the custom dialog components - text, image and button
-        TextView text = (TextView) dialog.findViewById(R.id.guestName);
-        text.setText(item.getDescription());
+        ((TextView) guestDialogView.findViewById(R.id.guestName)).setText(item.id);
+        ((TextView) guestDialogView.findViewById(R.id.guestInfo)).setText(item.getDescription());
+        ((CheckBox) guestDialogView.findViewById(R.id.enableVote)).setChecked(!item.canVote());
+        ((CheckBox) guestDialogView.findViewById(R.id.muteSongSugestion)).setChecked(!item.canSuggest());
 
-        Button btnOK = (Button) dialog.findViewById(R.id.btnOk);
-        Button btnKick = (Button) dialog.findViewById(R.id.btnKickOut);
-        // if button is clicked, close the custom dialog
-        btnOK.setOnClickListener(new View.OnClickListener() {
+        builder.setView(guestDialogView)
+                .setNegativeButton(R.string.kickOut, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        GuestStructure.removeItem(item);
+                        GuestFragment guestFragment = new GuestFragment();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, guestFragment)
+                                .commit();
+
+                    }
+                }).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                dialog.dismiss();
+            public void onClick(DialogInterface dialog, int which) {
+                if (((CheckBox) guestDialogView.findViewById(R.id.muteSongSugestion)).isChecked()) {
+                    item.banSuggestions();
+                } else {
+                    item.enableSuggestions();
+                }
+
+                if (((CheckBox) guestDialogView.findViewById(R.id.enableVote)).isChecked()) {
+                    item.banVote();
+                } else {
+                    item.enableVote();
+                }
+
             }
         });
-        btnKick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
+        AlertDialog dialog = builder.create();
         dialog.show();
     }
 public void onListFragmentInteraction(Song item){
