@@ -24,10 +24,11 @@ import android.widget.TextView;
 
 import com.comp3008.piglists.model.Guest;
 import com.comp3008.piglists.model.PlayList;
+import com.comp3008.piglists.model.Song;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,PlayListFragment.OnPlayListInteractionListener,
-        GuestFragment.OnGuestSelectListener {
+        GuestFragment.OnGuestSelectListener,SongFragment.OnListFragmentInteractionListener {
 
     boolean isConnected;
 
@@ -141,9 +142,9 @@ public class MainActivity extends AppCompatActivity
                     .addToBackStack("").commit();
 
         } else if (id == R.id.nav_my_playlists) {
-            //DisplayPlayListsFragment playlists = new DisplayPlayListsFragment();
-            //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, playlists)
-                   // .addToBackStack("").commit();
+            PlayListFragment playlists = new PlayListFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, playlists)
+                    .addToBackStack("").commit();
         } else if (id == R.id.nav_new_event) {
 
         } else if (id == R.id.nav_new_playlist) {
@@ -157,7 +158,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
     public void onListFragmentInteraction(PlayList item){
-
+        SongFragment songFragment = new SongFragment();
+        songFragment.setPlaylist(item);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, songFragment)
+                .addToBackStack("").commit();
     }
     @Override
     public void onGuestSelected(Guest item) {
@@ -188,7 +192,9 @@ public class MainActivity extends AppCompatActivity
 
         dialog.show();
     }
+public void onListFragmentInteraction(Song item){
 
+}
     private class ConnectingToEventTask extends AsyncTask<TaskParams, Integer, Boolean> {
         AlertDialog.Builder builder;
         AlertDialog dialog;

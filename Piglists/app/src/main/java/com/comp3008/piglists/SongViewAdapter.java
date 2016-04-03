@@ -1,5 +1,6 @@
 package com.comp3008.piglists;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +36,6 @@ public class SongViewAdapter extends RecyclerView.Adapter<SongViewAdapter.ViewHo
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
         holder.setContent();
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -57,24 +57,28 @@ public class SongViewAdapter extends RecyclerView.Adapter<SongViewAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
+        public final TextView mTitle;
+        public final TextView mAuthor;
+        public final TextView mVotes;
         public Song mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mTitle = (TextView) view.findViewById(R.id.txtSongName);
+            mAuthor = (TextView) view.findViewById(R.id.txtSongAuthor);
+            mVotes = (TextView) view.findViewById(R.id.txtVote);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mTitle.getText() + "'";
         }
 
         public void setContent() {
-
+            mTitle.setText(mItem.getTitle());
+            mAuthor.setText(mItem.getAuthor());
+            mVotes.setText(""+mItem.getVotes());
         }
     }
 }

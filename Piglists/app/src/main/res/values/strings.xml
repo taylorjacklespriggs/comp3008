@@ -22,4 +22,7 @@
 
     <string name="disconnectingDialog">You\'ve been disconnected.</string>
     <string name="ok">Ok</string>
+    <string name="music">music</string>
+    <string name="minus">-</string>
+    <string name="plus">+</string>
 </resources>

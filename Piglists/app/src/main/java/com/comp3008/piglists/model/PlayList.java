@@ -40,4 +40,8 @@ public class PlayList {
     public List<Song> getTopThree() {
         return songs.subList(0,3);
     }
+
+    public List<Song> getSongs(){
+        return this.songs;
+    }
 }

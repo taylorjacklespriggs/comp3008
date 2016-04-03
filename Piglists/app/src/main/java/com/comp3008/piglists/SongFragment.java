@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.comp3008.piglists.model.PlayList;
 import com.comp3008.piglists.model.Song;
 import com.comp3008.piglists.model.SongStructure;
 
@@ -28,7 +29,7 @@ public class SongFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-
+    private PlayList playlist;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -69,7 +70,7 @@ public class SongFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new SongViewAdapter(SongStructure.ITEMS, mListener));
+            recyclerView.setAdapter(new SongViewAdapter(playlist.getSongs(), mListener));
         }
         return view;
     }
@@ -90,6 +91,10 @@ public class SongFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void setPlaylist(PlayList item) {
+        this.playlist = item;
     }
 
     /**
