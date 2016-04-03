@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -62,7 +63,7 @@ public class PlaylistViewAdapter
     public class PlayListViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
-        public final ListView mContentView;
+        public final LinearLayout mContentView;
         public PlayList mItem;
         private final Context mContext;
 
@@ -70,14 +71,19 @@ public class PlaylistViewAdapter
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (ListView) view.findViewById(R.id.content);
+            mContentView = (LinearLayout) view.findViewById(R.id.song_wrapper_list);
             mContext = view.getContext();
         }
 
         public void setPlayList(PlayList pl) {
             mItem = pl;
             mIdView.setText(String.valueOf(pl.id));
-            mContentView.setAdapter(new PlayListAdapter(mContext, pl.songs));
+            mContentView.removeAllViews();
+            for(PlayList.SongWrapper wrap : pl.songs) {
+                SongWrapperView swv = new SongWrapperView(mContentView);
+                swv.setSongWrapper(wrap);
+                mContentView.addView(swv.mView);
+            }
         }
     }
 
@@ -95,11 +101,10 @@ public class PlaylistViewAdapter
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View rowView = inflater.inflate(R.layout.view_song_wrapper, parent, false);
-            SongWrapperViewHolder songView =
-                    new SongWrapperViewHolder(rowView);
+            SongWrapperView songView =
+                    new SongWrapperView(parent);
             songView.setSongWrapper(values.get(position));
-            return rowView;
+            return songView.mView;
         }
     }
 

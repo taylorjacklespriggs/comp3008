@@ -15,16 +15,15 @@ import com.comp3008.piglists.model.Song;
 /**
  * Created by taylor on 4/1/16.
  */
-public class SongViewHolder extends RecyclerView.ViewHolder {
+public class SongViewHolder {
 
     private Song song;
-    public final View mView;
+    public final View view;
     public final TextView mTitleView;
     public final TextView mAuthorView;
 
-    public SongViewHolder(View view) {
-        super(view);
-        mView = view;
+    public SongViewHolder(View v) {
+        view = v;
         mTitleView = (TextView) view.findViewById(R.id.title);
         mAuthorView = (TextView) view.findViewById(R.id.author);
     }
