@@ -23,7 +23,7 @@ public class SongWrapperView {
         LayoutInflater lf;
         lf = (LayoutInflater) parent.getContext()
                 .getSystemService(LAYOUT_INFLATER_SERVICE);
-        mView = lf.inflate(R.layout.view_song_wrapper, parent, false);
+        mView = lf.inflate(R.layout.view_songwrapper, parent, false);
         mTitleView = (TextView) mView.findViewById(R.id.title);
         mAuthorView = (TextView) mView.findViewById(R.id.author);
         mVoteView = (TextView) mView.findViewById(R.id.votes);

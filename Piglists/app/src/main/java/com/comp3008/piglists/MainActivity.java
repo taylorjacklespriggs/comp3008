@@ -7,6 +7,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,11 +23,19 @@ import android.widget.TextView;
 
 import com.comp3008.piglists.model.Guest;
 import com.comp3008.piglists.model.PlayList;
+import com.comp3008.piglists.model.PlayListStructure;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PlayListFragment.OnListFragmentInteractionListener, GuestFragment.OnGuestSelectListener {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener,
+        DisplayPlayListsFragment.OnDisplayPlayListsFragmentInteractionListener,
+        PlayListFragment.OnPlayListFragmentInteractionListener,
+        GuestFragment.OnGuestSelectListener {
+
+    public static final String MY_PLAYLISTS_ID = "my-playlists";
+    public static final String MANAGE_GUESTS_ID = "manage-guests";
 
     boolean isConnected;
     /**
@@ -32,6 +43,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+
+    private DisplayPlayListsFragment myPlayListsFragment;
+    private GuestFragment manageGuestsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +64,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        myPlayListsFragment = DisplayPlayListsFragment.newInstance(1);
+        manageGuestsFragment = GuestFragment.newInstance(1);
+
         //add the playlist fragment to start with
-        PlayListFragment playlistFragment = new PlayListFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, playlistFragment).commit();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, myPlayListsFragment, MY_PLAYLISTS_ID)
+                .commit();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    private void showMyPlayLists() {
+        replaceFragment(myPlayListsFragment);
+    }
+
+    private void showManageGuests() {
+        replaceFragmentToStack(manageGuestsFragment, MANAGE_GUESTS_ID);
+    }
+
+    private void showPlayList(PlayList pl) {
+        PlayListFragment plFragment =
+                PlayListFragment.newInstance(1, pl);
+        replaceFragmentToStack(plFragment, pl.toString());
+    }
+
+    private void replaceFragment(Fragment f) {
+        FragmentManager fm = getSupportFragmentManager();
+        final FragmentTransaction transaction = fm.beginTransaction();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, f).commit();
+    }
+
+    private void replaceFragmentToStack(Fragment f, String id) {
+        FragmentManager fm = getSupportFragmentManager();
+        final FragmentTransaction transaction = fm.beginTransaction();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, f)
+                .addToBackStack(id).commit();
     }
 
     @Override
@@ -138,10 +183,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_join_event) {
 
         } else if (id == R.id.nav_manage_guests) {
-            GuestFragment guestFragment = new GuestFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, guestFragment).addToBackStack("").commit();
+            showManageGuests();
         } else if (id == R.id.nav_my_playlists) {
-
+            showMyPlayLists();
         } else if (id == R.id.nav_new_event) {
 
         } else if (id == R.id.nav_new_playlist) {
@@ -156,7 +200,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onListFragmentInteraction(PlayList item) {
+    public void onDisplayPlayListsFragmentInteraction(PlayList item) {
+        Log.i("MainActivity", "playlist selected: " + item.toString());
+        showPlayList(item);
+    }
+
+    @Override
+    public void onPlayListFragmentInteraction(PlayList.SongWrapper item) {
         Log.i("MainActivity", "playlist selected: " + item.toString());
     }
 

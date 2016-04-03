@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,33 +16,30 @@ import com.comp3008.piglists.model.PlayListStructure;
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnPlayListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnDisplayPlayListsFragmentInteractionListener}
  * interface.
  */
-public class PlayListFragment extends Fragment {
+public class DisplayPlayListsFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    private static final String ARG_PLAYLIST_ID = "playlist-id";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private int mPlayListID;
-    private OnPlayListFragmentInteractionListener mListener;
+    private OnDisplayPlayListsFragmentInteractionListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public PlayListFragment() {
+    public DisplayPlayListsFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static PlayListFragment newInstance(int columnCount, PlayList pl) {
-        PlayListFragment fragment = new PlayListFragment();
+    public static DisplayPlayListsFragment newInstance(int columnCount) {
+        DisplayPlayListsFragment fragment = new DisplayPlayListsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
-        args.putInt(ARG_PLAYLIST_ID, pl.id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,14 +50,13 @@ public class PlayListFragment extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-            mPlayListID = getArguments().getInt(ARG_PLAYLIST_ID);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_songwrapper_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_playlist_list, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -72,10 +67,8 @@ public class PlayListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(
-                    new PlayListViewAdapter(PlayListStructure.ITEM_MAP.get(mPlayListID), mListener));
+            recyclerView.setAdapter(new DisplayPlayListsViewAdapter(PlayListStructure.ITEMS, mListener));
         }
-
         return view;
     }
 
@@ -83,8 +76,8 @@ public class PlayListFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnPlayListFragmentInteractionListener) {
-            mListener = (OnPlayListFragmentInteractionListener) context;
+        if (context instanceof OnDisplayPlayListsFragmentInteractionListener) {
+            mListener = (OnDisplayPlayListsFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
@@ -107,7 +100,7 @@ public class PlayListFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnPlayListFragmentInteractionListener {
-        void onPlayListFragmentInteraction(PlayList.SongWrapper item);
+    public interface OnDisplayPlayListsFragmentInteractionListener {
+        void onDisplayPlayListsFragmentInteraction(PlayList item);
     }
 }

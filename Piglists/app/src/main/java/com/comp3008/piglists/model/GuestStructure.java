@@ -30,10 +30,10 @@ public class GuestStructure {
         addItem(new Guest("Elyas Syoufi"));
         addItem(new Guest("Harry Potter"));
         addItem(new Guest("Taylor J Spriggs"));
-        addItem(new Guest("Water Mellon"));
+        addItem(new Guest("Walter Mellon"));
         addItem(new Guest("Christopher Charron"));
-        addItem(new Guest("Dark Roast"));
-        addItem(new Guest("Super Man"));
+        addItem(new Guest("Derek Roast"));
+        addItem(new Guest("Clark Kent"));
     }
     private static void addItem(Guest item) {
         ITEMS.add(item);

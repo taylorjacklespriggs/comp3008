@@ -15,31 +15,32 @@ import java.util.Comparator;
 import java.util.List;
 
 public class PlayListViewAdapter
-        extends RecyclerView.Adapter<PlayListViewAdapter.PlayListViewHolder> {
+        extends RecyclerView.Adapter<PlayListViewAdapter.SongWrapperViewHolder> {
 
     public final static int SONG_PREVIEW_COUNT = 4;
 
-    private final List<PlayList> mValues;
-    private final PlayListFragment.OnListFragmentInteractionListener mListener;
+    private final PlayList mPlayList;
+    private final PlayListFragment.OnPlayListFragmentInteractionListener mListener;
 
-    public PlayListViewAdapter(List<PlayList> items, PlayListFragment.OnListFragmentInteractionListener listener) {
-        mValues = items;
+    public PlayListViewAdapter(PlayList pl,
+                               PlayListFragment.OnPlayListFragmentInteractionListener listener) {
+        mPlayList = pl;
         mListener = listener;
     }
 
     @Override
-    public PlayListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SongWrapperViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_playlist, parent, false);
-        return new PlayListViewHolder(view);
+                .inflate(R.layout.view_songwrapper, parent, false);
+        return new SongWrapperViewHolder(parent);
     }
 
     @Override
-    public void onBindViewHolder(final PlayListViewHolder holder, int position) {
-        PlayList playList = mValues.get(position);
-        holder.mItem = playList;
-        holder.setPlayList(playList);
+    public void onBindViewHolder(final SongWrapperViewHolder holder, int position) {
+        PlayList.SongWrapper wrap = mPlayList.songs.get(position);
+        holder.setSongWrapper(wrap);
 
+        /*
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,43 +51,25 @@ public class PlayListViewAdapter
                 }
             }
         });
+        */
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return mPlayList.songs.size();
     }
 
-    public class PlayListViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final LinearLayout mContentView;
-        public PlayList mItem;
+    public class SongWrapperViewHolder extends RecyclerView.ViewHolder {
+        public final SongWrapperView mView;
+        public PlayList.SongWrapper mItem;
 
-        public PlayListViewHolder(View view) {
+        public SongWrapperViewHolder(ViewGroup view) {
             super(view);
-            mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (LinearLayout) view.findViewById(R.id.song_wrapper_list);
+            mView = new SongWrapperView(view);
         }
 
-        public void setPlayList(PlayList pl) {
-            mItem = pl;
-            mIdView.setText(String.valueOf(pl.id));
-            List<PlayList.SongWrapper> songs = new ArrayList<>(pl.songs);
-            Collections.sort(songs, new Comparator<PlayList.SongWrapper>() {
-                @Override
-                public int compare(PlayList.SongWrapper lhs, PlayList.SongWrapper rhs) {
-                    return rhs.votes - lhs.votes;
-                }
-            });
-            songs = songs.subList(0, SONG_PREVIEW_COUNT);
-            mContentView.removeAllViews();
-            for(PlayList.SongWrapper wrap : songs) {
-                SongWrapperView swv = new SongWrapperView(mContentView);
-                swv.setSongWrapper(wrap);
-                mContentView.addView(swv.mView);
-            }
+        public void setSongWrapper(PlayList.SongWrapper sw) {
+            mView.setSongWrapper(sw);
         }
     }
 
