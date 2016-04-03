@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onGuestSelected(final Guest item) {
+    public void onGuestSelected(final Guest item, final GuestViewAdapter adapter) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         LayoutInflater inflater = MainActivity.this.getLayoutInflater();
         final View guestDialogView = inflater.inflate(R.layout.guest_dialog, null);
@@ -187,10 +187,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         GuestStructure.removeItem(item);
-                        GuestFragment guestFragment = new GuestFragment();
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, guestFragment)
-                                .commit();
-
+                        adapter.notifyDataSetChanged();
                     }
                 }).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override

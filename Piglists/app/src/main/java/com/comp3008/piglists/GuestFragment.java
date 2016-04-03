@@ -26,6 +26,7 @@ public class GuestFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnGuestSelectListener mListener;
+    private GuestViewAdapter adapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -67,7 +68,8 @@ public class GuestFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new GuestViewAdapter(GuestStructure.ITEMS, mListener));
+            adapter = new GuestViewAdapter(GuestStructure.ITEMS, mListener);
+            recyclerView.setAdapter(adapter);
         }
         return view;
     }
@@ -102,6 +104,6 @@ public class GuestFragment extends Fragment {
      */
     public interface OnGuestSelectListener {
         // TODO: Update argument type and name
-        void onGuestSelected(Guest item);
+        void onGuestSelected(Guest item, GuestViewAdapter adapter);
     }
 }

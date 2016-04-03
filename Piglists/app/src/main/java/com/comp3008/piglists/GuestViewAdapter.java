@@ -44,7 +44,7 @@ public class GuestViewAdapter extends RecyclerView.Adapter<GuestViewAdapter.View
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onGuestSelected(holder.mItem);
+                    mListener.onGuestSelected(holder.mItem, GuestViewAdapter.this);
                 }
             }
         });
