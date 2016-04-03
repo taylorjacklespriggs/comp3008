@@ -31,6 +31,14 @@ public class PlayList {
         createSongs();
     }
 
+    private static double approxNormal(int iterations) {
+        double sum = 0;
+        for(int i = 0; i < iterations; ++i) {
+            sum += Math.random();
+        }
+        return sum / iterations;
+    }
+
     private void createSongs() {
         Random rand = new Random();
         songs = new ArrayList<>();
@@ -38,7 +46,7 @@ public class PlayList {
         for(int i = 0; i < max; i++){
             songs.add(new SongWrapper(
                     new Song("Song " + i, "Author " + i, i %2 == 0? "Rock" : "EDM"),
-                    (int)(Math.random()*10)));
+                    (int)(Math.abs(approxNormal(100)-.5)*100)));
         }
     }
 

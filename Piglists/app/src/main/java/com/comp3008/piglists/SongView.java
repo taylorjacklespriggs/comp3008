@@ -12,13 +12,13 @@ import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 /**
  * Created by taylor on 4/1/16.
  */
-public class SongViewHolder {
+public class SongView {
 
     public final View mView;
     public final TextView mTitleView;
     public final TextView mAuthorView;
 
-    public SongViewHolder(ViewGroup parent) {
+    public SongView(ViewGroup parent) {
         LayoutInflater lf;
         lf = (LayoutInflater) parent.getContext()
                 .getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -27,7 +27,7 @@ public class SongViewHolder {
         mAuthorView = (TextView) mView.findViewById(R.id.author);
     }
 
-    public void setSongWrapper(Song song) {
+    public void setSong(Song song) {
         mTitleView.setText(song.getTitle());
         mAuthorView.setText(song.getAuthor());
     }

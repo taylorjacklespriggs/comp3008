@@ -14,11 +14,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link PlayList} and makes a call to the
- * specified {@link PlayListFragment.OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class PlayListViewAdapter
         extends RecyclerView.Adapter<PlayListViewAdapter.PlayListViewHolder> {
 
@@ -78,11 +73,11 @@ public class PlayListViewAdapter
         public void setPlayList(PlayList pl) {
             mItem = pl;
             mIdView.setText(String.valueOf(pl.id));
-            List<PlayList.SongWrapper> songs = new ArrayList<PlayList.SongWrapper>(pl.songs);
+            List<PlayList.SongWrapper> songs = new ArrayList<>(pl.songs);
             Collections.sort(songs, new Comparator<PlayList.SongWrapper>() {
                 @Override
                 public int compare(PlayList.SongWrapper lhs, PlayList.SongWrapper rhs) {
-                    return lhs.votes - rhs.votes;
+                    return rhs.votes - lhs.votes;
                 }
             });
             songs = songs.subList(0, SONG_PREVIEW_COUNT);

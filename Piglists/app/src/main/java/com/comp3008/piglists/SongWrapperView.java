@@ -32,6 +32,6 @@ public class SongWrapperView {
     public void setSongWrapper(PlayList.SongWrapper wrap) {
         mTitleView.setText(wrap.song.getTitle());
         mAuthorView.setText(wrap.song.getAuthor());
-        //mVoteView.setText(wrap.votes);
+        mVoteView.setText(Integer.toString(wrap.votes));
     }
 }
