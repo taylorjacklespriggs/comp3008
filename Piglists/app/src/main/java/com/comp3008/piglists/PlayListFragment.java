@@ -19,7 +19,7 @@ import com.comp3008.piglists.model.PlayListStructure;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class PlaylistFragment extends Fragment {
+public class PlayListFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -31,13 +31,13 @@ public class PlaylistFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public PlaylistFragment() {
+    public PlayListFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static PlaylistFragment newInstance(int columnCount) {
-        PlaylistFragment fragment = new PlaylistFragment();
+    public static PlayListFragment newInstance(int columnCount) {
+        PlayListFragment fragment = new PlayListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -67,7 +67,7 @@ public class PlaylistFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new PlaylistViewAdapter(PlayListStructure.ITEMS, mListener));
+            recyclerView.setAdapter(new PlayListViewAdapter(PlayListStructure.ITEMS, mListener));
         }
         return view;
     }

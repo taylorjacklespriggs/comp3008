@@ -3,6 +3,7 @@ package com.comp3008.piglists;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -11,7 +12,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.GetChars;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,10 +20,18 @@ import android.widget.TextView;
 
 import com.comp3008.piglists.model.Guest;
 import com.comp3008.piglists.model.PlayList;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PlaylistFragment.OnListFragmentInteractionListener, GuestFragment.OnGuestSelectListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PlayListFragment.OnListFragmentInteractionListener, GuestFragment.OnGuestSelectListener {
 
     boolean isConnected;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +51,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         //add the playlist fragment to start with
-        PlaylistFragment playlistFragment = new PlaylistFragment();
+        PlayListFragment playlistFragment = new PlayListFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, playlistFragment).commit();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        assert drawer != null;
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -88,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_connect) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
-            if (isConnected){
+            if (isConnected) {
                 item.setIcon(R.drawable.red_x);
                 item.setTitle(R.string.connect);
                 builder.setMessage(R.string.disconnectingDialog);
@@ -100,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 });
                 builder.create().show();
-            }else {
+            } else {
                 final ConnectingToEventTask task = new ConnectingToEventTask();
                 builder.setMessage(R.string.connectingDialog);
                 builder.setPositiveButton(R.string.connectingDialogCancel, new DialogInterface.OnClickListener() {
@@ -133,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_new_playlist) {
 
-        }else if (id == R.id.nav_share_playlist){
+        } else if (id == R.id.nav_share_playlist) {
 
         }
 
@@ -146,8 +159,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onListFragmentInteraction(PlayList item) {
         Log.i("MainActivity", "playlist selected: " + item.toString());
     }
+
     @Override
-    public void onGuestSelected(Guest item){
+    public void onGuestSelected(Guest item) {
 // custom dialog
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.guest_dialog);
@@ -166,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 dialog.dismiss();
             }
         });
-        btnKick.setOnClickListener(new View.OnClickListener(){
+        btnKick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
@@ -175,12 +189,53 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         dialog.show();
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.comp3008.piglists/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.comp3008.piglists/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
+
     private class ConnectingToEventTask extends AsyncTask<TaskParams, Integer, Boolean> {
         AlertDialog.Builder builder;
         AlertDialog dialog;
         MenuItem item;
 
-        protected Boolean doInBackground(TaskParams... params){
+        protected Boolean doInBackground(TaskParams... params) {
             this.builder = params[0].builder;
             this.dialog = params[0].dialog;
             this.item = params[0].item;
@@ -193,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return true;
         }
 
-        protected void onPostExecute(Boolean result){
+        protected void onPostExecute(Boolean result) {
             isConnected = true;
             item.setIcon(R.drawable.checkmark_green);
             item.setTitle(R.string.disconnect);

@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceListItem"
         android:text="20"
-        android:textSize="16dp"
+        android:textSize="24dp"
+        android:paddingTop="4dp"
         android:gravity="center_vertical|end" />
 </RelativeLayout>
