@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.comp3008.piglists.model.Guest;
@@ -100,7 +101,10 @@ public class MainActivity extends AppCompatActivity
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
             if (isConnected) {
-                item.setIcon(R.drawable.red_x);
+                //item.setIcon(R.drawable.red_x);
+                ((ImageView) findViewById(R.id.imageView)).setImageResource(R.drawable.red_x);
+                findViewById(R.id.nav_bar_header).setBackgroundResource(R.drawable.side_nav_bar_red);
+                ((TextView) findViewById(R.id.nav_bar_textView)).setText(R.string.side_nav_bar_disconnected);
                 item.setTitle(R.string.connect);
                 builder.setMessage(R.string.disconnectingDialog);
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -209,8 +213,11 @@ public class MainActivity extends AppCompatActivity
 
         protected void onPostExecute(Boolean result) {
             isConnected = true;
-            item.setIcon(R.drawable.checkmark_green);
+            //item.setIcon(R.drawable.checkmark_green);
+            ((ImageView) findViewById(R.id.imageView)).setImageResource(R.drawable.checkmark_green);
             item.setTitle(R.string.disconnect);
+            findViewById(R.id.nav_bar_header).setBackgroundResource(R.drawable.side_nav_bar);
+            ((TextView) findViewById(R.id.nav_bar_textView)).setText(R.string.side_nav_bar_connected);
 
             dialog.dismiss();
 
