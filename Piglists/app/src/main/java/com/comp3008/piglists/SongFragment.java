@@ -12,9 +12,6 @@ import android.view.ViewGroup;
 
 import com.comp3008.piglists.model.PlayList;
 import com.comp3008.piglists.model.Song;
-import com.comp3008.piglists.model.SongStructure;
-
-import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -30,6 +27,7 @@ public class SongFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private PlayList playlist;
+    private boolean currentlyPlaying = false;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -60,7 +58,9 @@ public class SongFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_song_list2, container, false);
+        if(currentlyPlaying){
 
+        }
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
@@ -70,7 +70,7 @@ public class SongFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new SongViewAdapter(playlist.getSongs(), mListener));
+            recyclerView.setAdapter(new SongViewAdapter(playlist.getSongs(), mListener, currentlyPlaying));
         }
         return view;
     }
@@ -93,8 +93,9 @@ public class SongFragment extends Fragment {
         mListener = null;
     }
 
-    public void setPlaylist(PlayList item) {
+    public void setPlaylist(PlayList item, boolean b) {
         this.playlist = item;
+        this.currentlyPlaying = b;
     }
 
     /**

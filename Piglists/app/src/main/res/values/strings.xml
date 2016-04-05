@@ -29,4 +29,9 @@
     <string name="minus">-</string>
     <string name="plus">+</string>
     <string name="nowPlaying">Now Playing</string>
+    <string name="joiningDialog">Waiting for host permission</string>
+    <string name="unJoin">Leave Event</string>
+    <string name="side_nav_bar_joined">You are connected to an event!</string>
+    <string name="joinedDialogConfirm">You have joined an event. Enjoy!</string>
+    <string name="selectPlaylist">Select a playlist for your event</string>
 </resources>

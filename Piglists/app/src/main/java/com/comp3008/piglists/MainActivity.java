@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.comp3008.piglists.model.Guest;
 import com.comp3008.piglists.model.GuestStructure;
 import com.comp3008.piglists.model.PlayList;
+import com.comp3008.piglists.model.PlayListStructure;
 import com.comp3008.piglists.model.Song;
 
 public class MainActivity extends AppCompatActivity
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity
     static boolean inEvent = false;
     static boolean admin = false;
     protected Menu sideMenu;
+    boolean pickingPlaylist = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +109,8 @@ public class MainActivity extends AppCompatActivity
                 findViewById(R.id.nav_bar_header).setBackgroundResource(R.drawable.side_nav_bar_red);
                 ((TextView) findViewById(R.id.nav_bar_textView)).setText(R.string.side_nav_bar_disconnected);
                 item.setTitle(R.string.connect);
+                sideMenu.findItem(R.id.nav_new_event).setEnabled(false);
+                sideMenu.findItem(R.id.nav_join_event).setEnabled(false);
                 builder.setMessage(R.string.disconnectingDialog);
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
@@ -116,6 +120,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
                 builder.create().show();
+
             } else {
                 final ConnectingToEventTask task = new ConnectingToEventTask();
                 builder.setMessage(R.string.connectingDialog);
@@ -138,7 +143,49 @@ public class MainActivity extends AppCompatActivity
                 task.execute(new TaskParams(builder, dialog, item));
             }
         } else if (id == R.id.nav_join_event) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            if (inEvent) {
+                //item.setIcon(R.drawable.red_x);
+                ((ImageView) findViewById(R.id.imageView)).setImageResource(R.drawable.red_x);
+                findViewById(R.id.nav_bar_header).setBackgroundResource(R.drawable.side_nav_bar_red);
+                ((TextView) findViewById(R.id.nav_bar_textView)).setText(R.string.side_nav_bar_disconnected);
+                item.setTitle(R.string.joinEvent);
+                sideMenu.findItem(R.id.nav_new_event).setEnabled(false);
+                sideMenu.findItem(R.id.nav_connect).setEnabled(true);
+                sideMenu.findItem(R.id.nav_now_playing).setEnabled(false);
+                builder.setMessage(R.string.disconnectingDialog);
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        inEvent = false;
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
 
+            }else {
+
+                final JoinEventTask task = new JoinEventTask();
+                builder.setMessage(R.string.joiningDialog);
+                builder.setPositiveButton(R.string.connectingDialogCancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.cancel();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        task.cancel(true);
+                    }
+                });
+                dialog.show();
+                task.execute(new TaskParams(builder, dialog, item));
+
+            }
         } else if (id == R.id.nav_manage_guests) {
             GuestFragment guestFragment = new GuestFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, guestFragment)
@@ -149,11 +196,28 @@ public class MainActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, playlists)
                     .addToBackStack("").commit();
         } else if (id == R.id.nav_new_event) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setMessage(R.string.selectPlaylist);
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    pickingPlaylist = true;
+                    PlayListFragment playlists = new PlayListFragment();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, playlists)
+                            .addToBackStack("").commit();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
 
         } else if (id == R.id.nav_new_playlist) {
 
-        } else if (id == R.id.nav_share_playlist) {
-
+        } else if (id == R.id.nav_now_playing) {
+            SongFragment frag = new SongFragment();
+            frag.setPlaylist(PlayListStructure.ITEM_MAP.get("-1"), true);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, frag)
+                    .addToBackStack("").commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -161,10 +225,26 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
     public void onListFragmentInteraction(PlayList item){
-        SongFragment songFragment = new SongFragment();
-        songFragment.setPlaylist(item);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, songFragment)
-                .addToBackStack("").commit();
+        if(!pickingPlaylist) {
+            SongFragment songFragment = new SongFragment();
+            songFragment.setPlaylist(item, false);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, songFragment)
+                    .addToBackStack("").commit();
+        }else{
+            PlayList currentlyplaying = new PlayList("-1", "Currently Playing");
+            for(Song song : item.getSongs()){
+                song.inCurrentlyPlaying(true);
+                currentlyplaying.songs.add(song);
+            }
+            PlayListStructure.ITEM_MAP.put("-1", currentlyplaying);
+            SongFragment songFragment = new SongFragment();
+            songFragment.setPlaylist(currentlyplaying, true);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, songFragment)
+                    .addToBackStack("").commit();
+            pickingPlaylist = false;
+            sideMenu.findItem(R.id.nav_now_playing).setEnabled(true);
+            sideMenu.findItem(R.id.nav_new_event).setEnabled(false);
+        }
     }
 
     @Override
@@ -265,5 +345,55 @@ public void onListFragmentInteraction(Song item){
             dialog = d;
             item = i;
         }
+    }
+    private class JoinEventTask extends AsyncTask<TaskParams, Integer, Boolean> {
+        AlertDialog.Builder builder;
+        AlertDialog dialog;
+        MenuItem item;
+
+        protected Boolean doInBackground(TaskParams... params) {
+            this.builder = params[0].builder;
+            this.dialog = params[0].dialog;
+            this.item = params[0].item;
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                return false;
+            }
+            if(isCancelled()){
+                return false;
+            }
+            return true;
+        }
+
+        protected void onPostExecute(Boolean result) {
+            if(result) {
+                inEvent = true;
+                ((ImageView) findViewById(R.id.imageView)).setImageResource(R.drawable.checkmark_green);
+                item.setTitle(R.string.unJoin);
+                findViewById(R.id.nav_bar_header).setBackgroundResource(R.drawable.side_nav_bar);
+                ((TextView) findViewById(R.id.nav_bar_textView)).setText(R.string.side_nav_bar_joined);
+
+                dialog.dismiss();
+
+                builder.setMessage(R.string.joinedDialogConfirm);
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                PlayList playlist = new PlayList("-1", "Now Playing");
+                playlist.initSongs();
+                PlayListStructure.ITEM_MAP.put("-1", playlist);
+                builder.create().show();
+                sideMenu.findItem(R.id.nav_manage_guests).setEnabled(false);
+                sideMenu.findItem(R.id.nav_connect).setEnabled(false);
+                sideMenu.findItem(R.id.nav_new_event).setEnabled(false);
+                sideMenu.findItem(R.id.nav_now_playing).setEnabled(true);
+            }
+        }
+
     }
 }

@@ -14,7 +14,7 @@ public class Song {
     private String genre;
     private int votes;
     private TextView voteView;
-
+    private boolean currentlyPlaying = false;
     public Song(){
 
     }
@@ -49,5 +49,12 @@ public class Song {
     }
     public void onDownVote(){
         votes--;
+    }
+
+    public void inCurrentlyPlaying(boolean b) {
+        currentlyPlaying = b;
+    }
+    public boolean isInCurrentlyPlaying(){
+        return currentlyPlaying;
     }
 }

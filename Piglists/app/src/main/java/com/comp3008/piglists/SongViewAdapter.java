@@ -1,30 +1,28 @@
 package com.comp3008.piglists;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.comp3008.piglists.model.Song;
 
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
+
+
 public class SongViewAdapter extends RecyclerView.Adapter<SongViewAdapter.ViewHolder> {
 
     private final List<Song> mValues;
     private final SongFragment.OnListFragmentInteractionListener mListener;
-
-    public SongViewAdapter(List<Song> items, SongFragment.OnListFragmentInteractionListener listener) {
+    private boolean currentlyPlaying;
+    public SongViewAdapter(List<Song> items, SongFragment.OnListFragmentInteractionListener listener, boolean currentlyPlaying) {
         mValues = items;
         mListener = listener;
+        this.currentlyPlaying = currentlyPlaying;
     }
 
     @Override
@@ -61,6 +59,7 @@ public class SongViewAdapter extends RecyclerView.Adapter<SongViewAdapter.ViewHo
         public final TextView mTitle;
         public final TextView mAuthor;
         public final TextView mVotes;
+        public final LinearLayout voteContainer;
         public Song mItem;
 
         public ViewHolder(View view) {
@@ -69,6 +68,8 @@ public class SongViewAdapter extends RecyclerView.Adapter<SongViewAdapter.ViewHo
             mTitle = (TextView) view.findViewById(R.id.txtSongName);
             mAuthor = (TextView) view.findViewById(R.id.txtSongAuthor);
             mVotes = (TextView) view.findViewById(R.id.txtVote);
+            voteContainer = (LinearLayout) view.findViewById(R.id.voteLayout);
+
             Button mUp = (Button) view.findViewById(R.id.btnVoteUp);
             Button mDown = (Button) view.findViewById(R.id.btnVoteDown);
             mUp.setOnClickListener(new View.OnClickListener() {
@@ -99,6 +100,9 @@ public class SongViewAdapter extends RecyclerView.Adapter<SongViewAdapter.ViewHo
             mTitle.setText(mItem.getTitle());
             mAuthor.setText(mItem.getAuthor());
             mVotes.setText(""+mItem.getVotes());
+            if(!mItem.isInCurrentlyPlaying()){
+                voteContainer.setVisibility(View.GONE);
+            }
         }
     }
 }

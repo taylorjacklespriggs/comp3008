@@ -29,7 +29,7 @@
                 android:title="@string/newPlaylist"
                 android:enabled="true"/>
             <item
-                android:id="@+id/nav_share_playlist"
+                android:id="@+id/nav_now_playing"
                 android:title="@string/nowPlaying"
                 android:enabled="false"/>
         </menu>

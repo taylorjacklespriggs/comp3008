@@ -16,14 +16,17 @@ public class PlayList {
         this.title = title;
         this.id = id;
         songs = new ArrayList<>();
-        initSongs();
+        if(! id.equals("-1"))
+            initSongs();
     }
 
-    private void initSongs() {
+    public void initSongs() {
         Random rand = new Random();
         int i = rand.nextInt(200-50)+50;
         for(int j = 0; j < i; j ++){
             Song s = SongStructure.ITEMS.get(rand.nextInt(1000));
+            if(id.equals("-1"))
+                s.inCurrentlyPlaying(true);
             songs.add(s);
         }
     }
