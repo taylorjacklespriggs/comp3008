@@ -7,26 +7,31 @@
             android:title="@string/connect" />
         <item
             android:id="@+id/nav_new_event"
-            android:title="@string/newEvent" />
+            android:title="@string/newEvent"
+            android:enabled="false"/>
         <item
             android:id="@+id/nav_join_event"
             android:title="@string/joinEvent" />
         <item
             android:id="@+id/nav_manage_guests"
-            android:title="@string/manageGuests" />
+            android:title="@string/manageGuests"
+            android:enabled="false"/>
     </group>
 
     <item android:title="Playlists">
         <menu>
             <item
                 android:id="@+id/nav_my_playlists"
-                android:title="@string/myPlaylists" />
+                android:title="@string/myPlaylists"
+                android:enabled="true"/>
             <item
                 android:id="@+id/nav_new_playlist"
-                android:title="@string/newPlaylist" />
+                android:title="@string/newPlaylist"
+                android:enabled="true"/>
             <item
                 android:id="@+id/nav_share_playlist"
-                android:title="@string/sharPlaylist" />
+                android:title="@string/nowPlaying"
+                android:enabled="false"/>
         </menu>
     </item>
 

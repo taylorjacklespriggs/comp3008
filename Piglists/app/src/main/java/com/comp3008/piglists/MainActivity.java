@@ -1,7 +1,6 @@
 package com.comp3008.piglists;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
@@ -28,8 +28,10 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,PlayListFragment.OnPlayListInteractionListener,
         GuestFragment.OnGuestSelectListener,SongFragment.OnListFragmentInteractionListener {
 
-    boolean isConnected;
-
+    static boolean isConnected = false;
+    static boolean inEvent = false;
+    static boolean admin = false;
+    protected Menu sideMenu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,8 +46,9 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        navView.setNavigationItemSelectedListener(this);
+        sideMenu = navView.getMenu();
 
         PlayListFragment myPlayListsFragment = new PlayListFragment();
 
@@ -119,9 +122,8 @@ public class MainActivity extends AppCompatActivity
                 builder.setPositiveButton(R.string.connectingDialogCancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (which == Dialog.BUTTON_NEUTRAL) {
-                            dialog.cancel();
-                        }
+
+                        dialog.cancel();
                     }
                 });
                 AlertDialog dialog = builder.create();
@@ -219,30 +221,37 @@ public void onListFragmentInteraction(Song item){
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException ex) {
-                // do nothing
+                return false;
+            }
+            if(isCancelled()){
+                return false;
             }
             return true;
         }
 
         protected void onPostExecute(Boolean result) {
-            isConnected = true;
-            //item.setIcon(R.drawable.checkmark_green);
-            ((ImageView) findViewById(R.id.imageView)).setImageResource(R.drawable.checkmark_green);
-            item.setTitle(R.string.disconnect);
-            findViewById(R.id.nav_bar_header).setBackgroundResource(R.drawable.side_nav_bar);
-            ((TextView) findViewById(R.id.nav_bar_textView)).setText(R.string.side_nav_bar_connected);
+            if(result) {
+                isConnected = true;
+                //item.setIcon(R.drawable.checkmark_green);
+                ((ImageView) findViewById(R.id.imageView)).setImageResource(R.drawable.checkmark_green);
+                item.setTitle(R.string.disconnect);
+                findViewById(R.id.nav_bar_header).setBackgroundResource(R.drawable.side_nav_bar);
+                ((TextView) findViewById(R.id.nav_bar_textView)).setText(R.string.side_nav_bar_connected);
 
-            dialog.dismiss();
+                dialog.dismiss();
 
-            builder.setMessage(R.string.connectingDialogConfirm);
-            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
+                builder.setMessage(R.string.connectingDialogConfirm);
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
 
-            builder.create().show();
+                builder.create().show();
+                sideMenu.findItem(R.id.nav_new_event).setEnabled(true);
+                sideMenu.findItem(R.id.nav_join_event).setEnabled(false);
+            }
         }
     }
 

@@ -37,8 +37,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:layout_margin="0dp">
-
-
+        android:layout_marginLeft="@dimen/abc_text_size_large_material"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp">
     </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:id="@+id/sep"
+        android:layout_marginLeft="@dimen/text_margin"
+        android:layout_marginRight="@dimen/text_margin" />
 </LinearLayout>
