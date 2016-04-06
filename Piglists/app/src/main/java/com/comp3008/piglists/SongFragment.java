@@ -1,6 +1,7 @@
 package com.comp3008.piglists;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,11 +10,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.comp3008.piglists.model.PlayList;
+import com.comp3008.piglists.model.PlayListStructure;
 import com.comp3008.piglists.model.Searchable;
 import com.comp3008.piglists.model.Song;
 import com.comp3008.piglists.model.SongStructure;
+
+import java.util.Random;
 
 /**
  * A fragment representing a list of Items.
@@ -31,6 +37,9 @@ public class SongFragment extends Fragment implements Searchable {
     private PlayList playlist;
     private boolean currentlyPlaying = false;
     private SongViewAdapter adapter;
+    private TextView txtCurrentTime;
+    private ProgressBar progressBar;
+    private IncrementPlaying ip;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -63,13 +72,40 @@ public class SongFragment extends Fragment implements Searchable {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_song_list2, container, false);
+        View rv = view.findViewById(R.id.list);
         if(currentlyPlaying){
-
+            Song s = PlayListStructure.ITEM_MAP.get("-1").getTopThree().get(1);
+            TextView name = (TextView) view.findViewById(R.id.txtSongName);
+            TextView end = (TextView) view.findViewById(R.id.txtEndTime);
+            txtCurrentTime = (TextView) view.findViewById(R.id.txtCurrentTime);
+            name.setText(s.getTitle() + " by " + s.getAuthor());
+            progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+            Random rand = new Random();
+            int endMin = rand.nextInt(4-2)+2;
+            int endSec = rand.nextInt(60-5)+5;
+            int currentMin = rand.nextInt(endMin-1)+1;
+            int currentSec = rand.nextInt(endSec-1)+1;
+            int prog = ((currentSec + (currentMin*60))*100 / (endSec + (endMin*60)));
+            progressBar.setProgress(prog);
+            if(endSec < 10){
+                end.setText(endMin + ":0" + endSec);
+            }else {
+                end.setText(endMin + ":" + endSec);
+            }
+            if(currentSec < 10){
+                txtCurrentTime.setText(currentMin + ":0" + currentSec);
+            }else{
+                txtCurrentTime.setText(currentMin + ":" + currentSec);
+            }
+            ip = new IncrementPlaying();
+            ip.execute(new TaskParams(currentSec, currentMin, progressBar.getProgress(), endSec, endMin));
+        }else{
+            view.findViewById(R.id.nowPlayingView).setVisibility(View.GONE);
         }
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+        if (rv instanceof RecyclerView) {
+            Context context = rv.getContext();
+            RecyclerView recyclerView = (RecyclerView) rv;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
@@ -99,6 +135,9 @@ public class SongFragment extends Fragment implements Searchable {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        if(ip != null){
+            ip.cancel(true);
+        }
     }
 
     public void setPlaylist(PlayList item, boolean b) {
@@ -119,5 +158,80 @@ public class SongFragment extends Fragment implements Searchable {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Song item);
+    }
+
+    private class IncrementPlaying extends AsyncTask<TaskParams, TaskParams, Boolean> {
+        int currentSec;
+        int currentMin;
+        int currentProg;
+        ProgressBar progress;
+        int endmin;
+        int endsec;
+
+        protected Boolean doInBackground(TaskParams... params) {
+            this.currentSec = params[0].currentSec;
+            this.currentMin = params[0].currentMin;
+            this.currentProg = params[0].progress;
+            this.endsec = params[0].endSec;
+            this.endmin = params[0].endMin;
+
+            while(true) {
+                try {
+                    Thread.sleep(1000);
+                    if(currentSec > 59){
+                        currentMin ++;
+                        currentSec = 0;
+                    }else{
+                        currentSec ++;
+                    }
+                    long prog = ((currentSec + (currentMin*60))*100 / (endsec + (endmin*60)));
+                    currentProg = ((int) prog);
+                    publishProgress(new TaskParams(currentSec, currentMin, currentProg));
+
+                } catch (InterruptedException ex) {
+                    return false;
+                }
+                if (isCancelled()) {
+                    return false;
+                }
+            }
+        }
+
+        @Override
+        protected void onProgressUpdate(TaskParams ... params){
+            SongFragment.this.update(new TaskParams(currentSec, currentMin, currentProg));
+        }
+        protected void onPostExecute(Boolean result) {
+
+        }
+    }
+
+    private void update(TaskParams taskParams) {
+        if(taskParams.currentSec < 10){
+            txtCurrentTime.setText(taskParams.currentMin + ":0" + taskParams.currentSec);
+        }else{
+            txtCurrentTime.setText(taskParams.currentMin + ":" + taskParams.currentSec);
+        }
+        progressBar.setProgress(taskParams.progress);
+    }
+
+    private class TaskParams {
+        int currentSec;
+        int currentMin;
+        int progress;
+        int endSec;
+        int endMin;
+        TaskParams(int currsec, int currmin, int prog, int endsec, int endmin) {
+            currentSec = currsec;
+            currentMin = currmin;
+            progress = prog;
+            this.endSec = endsec;
+            this.endMin = endmin;
+        }
+        TaskParams(int currsec, int currmin, int prog) {
+            currentSec = currsec;
+            currentMin = currmin;
+            progress = prog;
+        }
     }
 }
