@@ -15,6 +15,7 @@ public class Song {
     private int votes;
     private TextView voteView;
     private boolean currentlyPlaying = false;
+    private int voteCount;
     public Song(){
 
     }
@@ -25,7 +26,8 @@ public class Song {
         this.genre = genre;
         Random random = new Random();
 
-        this.votes = random.nextInt(2000-500) + 500;
+        this.votes = random.nextInt(50-1) + 50;
+        this.voteCount = 0;
     }
 
     public String getTitle() {
@@ -45,10 +47,16 @@ public class Song {
     }
 
     public void onUpVote() {
-        votes++;
+        if(voteCount < 1) {
+            votes++;
+            voteCount++;
+        }
     }
     public void onDownVote(){
-        votes--;
+        if(voteCount > -1){
+            votes--;
+            voteCount --;
+        }
     }
 
     public void inCurrentlyPlaying(boolean b) {
@@ -56,5 +64,9 @@ public class Song {
     }
     public boolean isInCurrentlyPlaying(){
         return currentlyPlaying;
+    }
+
+    public String toString(){
+        return "Title: " + title + " author: " + author + " genre: " + genre + "votes: " + votes;
     }
 }

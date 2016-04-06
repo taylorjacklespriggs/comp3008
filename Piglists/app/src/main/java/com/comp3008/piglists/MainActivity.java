@@ -10,6 +10,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +25,7 @@ import com.comp3008.piglists.model.Guest;
 import com.comp3008.piglists.model.GuestStructure;
 import com.comp3008.piglists.model.PlayList;
 import com.comp3008.piglists.model.PlayListStructure;
+import com.comp3008.piglists.model.Searchable;
 import com.comp3008.piglists.model.Song;
 
 public class MainActivity extends AppCompatActivity
@@ -34,6 +37,9 @@ public class MainActivity extends AppCompatActivity
     static boolean admin = false;
     protected Menu sideMenu;
     boolean pickingPlaylist = false;
+    boolean inCurrentlyPlaying = false;
+    TextView searchBar;
+    Searchable currentFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +64,23 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, myPlayListsFragment)
                 .commit();
+        currentFragment = myPlayListsFragment;
+
+        searchBar = (TextView)findViewById(R.id.txtSearch);
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                currentFragment.search(searchBar.getText().toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
     }
 
     @Override
@@ -67,6 +90,10 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                Searchable f = (Searchable) getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getBackStackEntryCount() - 1);
+                currentFragment = f;
+            }
             super.onBackPressed();
         }
     }
@@ -102,7 +129,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_connect) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-
+            inCurrentlyPlaying = false;
             if (isConnected) {
                 //item.setIcon(R.drawable.red_x);
                 ((ImageView) findViewById(R.id.imageView)).setImageResource(R.drawable.red_x);
@@ -143,6 +170,7 @@ public class MainActivity extends AppCompatActivity
                 task.execute(new TaskParams(builder, dialog, item));
             }
         } else if (id == R.id.nav_join_event) {
+
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             if (inEvent) {
                 //item.setIcon(R.drawable.red_x);
@@ -159,6 +187,12 @@ public class MainActivity extends AppCompatActivity
                     public void onClick(DialogInterface dialog, int which) {
                         inEvent = false;
                         dialog.dismiss();
+                        if(inCurrentlyPlaying){
+                            PlayListFragment playlists = new PlayListFragment();
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, playlists)
+                                    .commit();
+                            inCurrentlyPlaying = false;
+                        }
                     }
                 });
                 builder.create().show();
@@ -187,15 +221,20 @@ public class MainActivity extends AppCompatActivity
 
             }
         } else if (id == R.id.nav_manage_guests) {
+            inCurrentlyPlaying = false;
             GuestFragment guestFragment = new GuestFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, guestFragment)
                     .addToBackStack("").commit();
+            currentFragment = guestFragment;
 
         } else if (id == R.id.nav_my_playlists) {
+            inCurrentlyPlaying = false;
             PlayListFragment playlists = new PlayListFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, playlists)
                     .addToBackStack("").commit();
+            currentFragment = playlists;
         } else if (id == R.id.nav_new_event) {
+            inCurrentlyPlaying = false;
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setMessage(R.string.selectPlaylist);
             builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -212,12 +251,14 @@ public class MainActivity extends AppCompatActivity
             dialog.show();
 
         } else if (id == R.id.nav_new_playlist) {
-
+            inCurrentlyPlaying = false;
         } else if (id == R.id.nav_now_playing) {
             SongFragment frag = new SongFragment();
             frag.setPlaylist(PlayListStructure.ITEM_MAP.get("-1"), true);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, frag)
                     .addToBackStack("").commit();
+            currentFragment = frag;
+            inCurrentlyPlaying = true;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -230,6 +271,7 @@ public class MainActivity extends AppCompatActivity
             songFragment.setPlaylist(item, false);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, songFragment)
                     .addToBackStack("").commit();
+            currentFragment = songFragment;
         }else{
             PlayList currentlyplaying = new PlayList("-1", "Currently Playing");
             for(Song song : item.getSongs()){
@@ -241,9 +283,11 @@ public class MainActivity extends AppCompatActivity
             songFragment.setPlaylist(currentlyplaying, true);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, songFragment)
                     .addToBackStack("").commit();
+            currentFragment = songFragment;
             pickingPlaylist = false;
             sideMenu.findItem(R.id.nav_now_playing).setEnabled(true);
             sideMenu.findItem(R.id.nav_new_event).setEnabled(false);
+            sideMenu.findItem(R.id.nav_manage_guests).setEnabled(true);
         }
     }
 
@@ -285,9 +329,44 @@ public class MainActivity extends AppCompatActivity
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-public void onListFragmentInteraction(Song item){
-    Log.i("MainActivity", "song selected: " + item.getTitle());
-}
+    public void onListFragmentInteraction(final Song item){
+        Log.i("MainActivity", "song selected: " + item.getTitle());
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        if(inEvent){
+            builder.setNegativeButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            }).setPositiveButton(R.string.requestSong, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).setMessage("The song " + item.getTitle() + " by " + item.getAuthor() + " has been requested!");
+                    AlertDialog d = builder.create();
+                    d.show();
+                }
+            }).setMessage("Title: " + item.getTitle() + "\n Author: " + item.getAuthor() + "\nGenre: " + item.getGenre());
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }else{
+            builder.setNegativeButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            }).setMessage("Title: " + item.getTitle() + "\n Author: " + item.getAuthor() + "\nGenre: " + item.getGenre());
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+    }
+
     private class ConnectingToEventTask extends AsyncTask<TaskParams, Integer, Boolean> {
         AlertDialog.Builder builder;
         AlertDialog dialog;

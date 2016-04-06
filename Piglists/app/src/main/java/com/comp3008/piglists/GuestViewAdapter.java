@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.comp3008.piglists.model.Guest;
 import com.comp3008.piglists.model.GuestStructure;
+
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public class GuestViewAdapter extends RecyclerView.Adapter<GuestViewAdapter.ViewHolder> {
 
-    private final List<Guest> mValues;
+    private List<Guest> mValues;
     private final GuestFragment.OnGuestSelectListener mListener;
 
     public GuestViewAdapter(List<Guest> items, GuestFragment.OnGuestSelectListener listener) {
@@ -53,6 +54,22 @@ public class GuestViewAdapter extends RecyclerView.Adapter<GuestViewAdapter.View
     @Override
     public int getItemCount() {
         return mValues.size();
+    }
+
+    public void search(String query) {
+        if(query == null || query.trim().equals("")){
+            GuestStructure.SEARCHED_ITEMS.clear();
+            GuestStructure.SEARCHED_ITEMS.addAll(GuestStructure.ITEMS);
+            notifyDataSetChanged();
+            return;
+        }
+        GuestStructure.SEARCHED_ITEMS.clear();
+        for(Guest g : GuestStructure.ITEMS){
+            if(g.toString().toLowerCase().contains(query)){
+                GuestStructure.SEARCHED_ITEMS.add(g);
+            }
+        }
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

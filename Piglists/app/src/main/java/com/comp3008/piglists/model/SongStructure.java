@@ -13,7 +13,7 @@ public class SongStructure {
      * An array of sample (dummy) items.
      */
     public static final List<Song> ITEMS = new ArrayList<Song>();
-
+    public static final List<Song> SEARCHED_ITEMS = new ArrayList<Song>();
     /**
      * A map of sample (dummy) items, by ID.
      */
@@ -26,6 +26,7 @@ public class SongStructure {
         for(int i = 0; i < 1000; i ++){
             addItem(new Song(""+i, "Title " + i, "Author " + i, i%2==0?"Rock" : "Pop"));
         }
+        SEARCHED_ITEMS.addAll(ITEMS);
     }
     private static void addItem(Song item) {
         ITEMS.add(item);

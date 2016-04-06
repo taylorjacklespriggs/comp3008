@@ -14,7 +14,7 @@ public class PlayListStructure {
      * An array of sample (dummy) items.
      */
     public static final List<PlayList> ITEMS = new ArrayList<PlayList>();
-
+    public static List<PlayList> SEARCHED_ITEMS = new ArrayList<PlayList>();
     /**
      * A map of sample (dummy) items, by ID.
      */
@@ -31,6 +31,7 @@ public class PlayListStructure {
         addItem(new PlayList("5", "Workout"));
         addItem(new PlayList("6", "Top Weekly"));
         addItem(new PlayList("7", "Pop / Hip Hop"));
+        SEARCHED_ITEMS = new ArrayList<>(ITEMS);
     }
     private static void addItem(PlayList item) {
         ITEMS.add(item);

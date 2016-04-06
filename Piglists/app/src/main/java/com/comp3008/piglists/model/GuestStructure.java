@@ -16,8 +16,8 @@ public class GuestStructure {
     /**
      * An array of sample (dummy) items.
      */
+    public static List<Guest> SEARCHED_ITEMS = new ArrayList<Guest>();
     public static final List<Guest> ITEMS = new ArrayList<Guest>();
-
     /**
      * A map of sample (dummy) items, by ID.
      */
@@ -34,6 +34,7 @@ public class GuestStructure {
         addItem(new Guest("Christopher Charron"));
         addItem(new Guest("Derek Roast"));
         addItem(new Guest("Clark Kent"));
+        SEARCHED_ITEMS = new ArrayList<>(ITEMS);
     }
     private static void addItem(Guest item) {
         ITEMS.add(item);

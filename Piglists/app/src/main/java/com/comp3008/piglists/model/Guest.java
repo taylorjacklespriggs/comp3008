@@ -44,4 +44,8 @@ public class Guest {
     public void enableSuggestions() {
         isAbleToMakeSuggestions = true;
     }
+
+    public String toString(){
+        return "guest: " + id + " " + description;
+    }
 }

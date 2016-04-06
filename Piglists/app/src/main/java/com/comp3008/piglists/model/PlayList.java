@@ -47,4 +47,8 @@ public class PlayList {
     public List<Song> getSongs(){
         return this.songs;
     }
+
+    public String toString(){
+        return "Playlist: " + title + "Songs: " + songs;
+    }
 }

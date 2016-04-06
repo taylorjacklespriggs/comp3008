@@ -1,18 +1,18 @@
 package com.comp3008.piglists;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.comp3008.piglists.model.PlayList;
+import com.comp3008.piglists.model.PlayListStructure;
 import com.comp3008.piglists.model.Song;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,6 +60,27 @@ public class PlayListViewAdapter extends RecyclerView.Adapter<PlayListViewAdapte
         return mValues.size();
     }
 
+    public void search(String query) {
+        Log.i("adapter", query);
+        if(query == null || query.trim().equals("")){
+            PlayListStructure.SEARCHED_ITEMS.clear();
+            PlayListStructure.SEARCHED_ITEMS.addAll(PlayListStructure.ITEMS);
+            notifyDataSetChanged();
+            return;
+        }
+        PlayListStructure.SEARCHED_ITEMS.clear();
+        Log.i("adapter", "size after clearing: " + PlayListStructure.SEARCHED_ITEMS.size());
+        for(PlayList g : PlayListStructure.ITEMS){
+            if(g.toString().toLowerCase().contains(query)){
+                Log.i("adapter", g.toString().toLowerCase());
+                PlayListStructure.SEARCHED_ITEMS.add(g);
+            }
+        }
+        Log.i("adapter", "notifying change for size: " + PlayListStructure.SEARCHED_ITEMS.size());
+        notifyDataSetChanged();
+        Log.i("adapter", "notifying change for mValues: " + mValues.size());
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
@@ -83,13 +104,15 @@ public class PlayListViewAdapter extends RecyclerView.Adapter<PlayListViewAdapte
         public void setContent() {
             List<Song> songs = mItem.getTopThree();
             mTitleView.setText(mItem.title);
-            for (Song s : songs) {
-                Context c = mView.getContext();
-                LayoutInflater inflater = (LayoutInflater)c.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View v = inflater.inflate(R.layout.simple_song, null);
-                TextView title = (TextView)v.findViewById(R.id.txtTitle);
-                title.setText(s.getAuthor() + " - " + s.getTitle());
-                mContentView.addView(v);
+            if(mContentView.getChildCount() < 3) {
+                for (int i = 0; i < 3; i++) {
+                    Context c = mView.getContext();
+                    LayoutInflater inflater = (LayoutInflater) c.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    View v = inflater.inflate(R.layout.simple_song, null);
+                    TextView title = (TextView) v.findViewById(R.id.txtTitle);
+                    title.setText(songs.get(i).getAuthor() + " - " + songs.get(i).getTitle());
+                    mContentView.addView(v);
+                }
             }
 
         }

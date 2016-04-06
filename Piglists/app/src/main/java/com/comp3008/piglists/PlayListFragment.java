@@ -12,23 +12,17 @@ import android.view.ViewGroup;
 
 import com.comp3008.piglists.model.PlayList;
 import com.comp3008.piglists.model.PlayListStructure;
+import com.comp3008.piglists.model.Searchable;
 
-import java.util.List;
 
-/**
- * A fragment representing a list of Items.
- * <p>
- * Activities containing this fragment MUST implement the {@link onListFragmentInteraction}
- * interface.
- */
-public class PlayListFragment extends Fragment {
+public class PlayListFragment extends Fragment implements Searchable{
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnPlayListInteractionListener mListener;
-
+    private PlayListViewAdapter adapter;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -45,7 +39,9 @@ public class PlayListFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+    public void search(String query){
+        adapter.search(query);
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +65,8 @@ public class PlayListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new PlayListViewAdapter(PlayListStructure.ITEMS, mListener));
+            adapter = new PlayListViewAdapter(PlayListStructure.SEARCHED_ITEMS, mListener);
+            recyclerView.setAdapter(adapter);
         }
         return view;
     }

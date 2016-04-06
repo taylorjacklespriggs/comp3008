@@ -11,7 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.comp3008.piglists.model.PlayList;
+import com.comp3008.piglists.model.Searchable;
 import com.comp3008.piglists.model.Song;
+import com.comp3008.piglists.model.SongStructure;
 
 /**
  * A fragment representing a list of Items.
@@ -19,7 +21,7 @@ import com.comp3008.piglists.model.Song;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class SongFragment extends Fragment {
+public class SongFragment extends Fragment implements Searchable {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -28,6 +30,7 @@ public class SongFragment extends Fragment {
     private OnListFragmentInteractionListener mListener;
     private PlayList playlist;
     private boolean currentlyPlaying = false;
+    private SongViewAdapter adapter;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -44,7 +47,9 @@ public class SongFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+    public void search(String query){
+        adapter.search(query);
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +75,10 @@ public class SongFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new SongViewAdapter(playlist.getSongs(), mListener, currentlyPlaying));
+            SongStructure.SEARCHED_ITEMS.clear();
+            SongStructure.SEARCHED_ITEMS.addAll(playlist.getSongs());
+            adapter = new SongViewAdapter(SongStructure.SEARCHED_ITEMS, mListener, currentlyPlaying);
+            recyclerView.setAdapter(adapter);
         }
         return view;
     }

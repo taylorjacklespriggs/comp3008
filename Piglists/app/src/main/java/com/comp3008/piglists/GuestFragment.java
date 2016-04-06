@@ -6,12 +6,14 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.comp3008.piglists.model.Guest;
 import com.comp3008.piglists.model.GuestStructure;
+import com.comp3008.piglists.model.Searchable;
 
 /**
  * A fragment representing a list of Items.
@@ -19,7 +21,7 @@ import com.comp3008.piglists.model.GuestStructure;
  * Activities containing this fragment MUST implement the {@link OnGuestSelectListener}
  * interface.
  */
-public class GuestFragment extends Fragment {
+public class GuestFragment extends Fragment implements Searchable {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -34,7 +36,10 @@ public class GuestFragment extends Fragment {
      */
     public GuestFragment() {
     }
-
+    public void search(String query){
+        Log.i("GuestFragment", "Search called(Query): " + query);
+        adapter.search(query);
+    }
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static GuestFragment newInstance(int columnCount) {
@@ -68,7 +73,7 @@ public class GuestFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            adapter = new GuestViewAdapter(GuestStructure.ITEMS, mListener);
+            adapter = new GuestViewAdapter(GuestStructure.SEARCHED_ITEMS, mListener);
             recyclerView.setAdapter(adapter);
         }
         return view;
