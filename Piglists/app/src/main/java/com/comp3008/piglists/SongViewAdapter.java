@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,11 +24,13 @@ public class SongViewAdapter extends RecyclerView.Adapter<SongViewAdapter.ViewHo
     private final List<Song> initialItems;
     private final SongFragment.OnListFragmentInteractionListener mListener;
     private boolean currentlyPlaying;
-    public SongViewAdapter(List<Song> items, SongFragment.OnListFragmentInteractionListener listener, boolean currentlyPlaying) {
+    private boolean newList;
+    public SongViewAdapter(List<Song> items, SongFragment.OnListFragmentInteractionListener listener, boolean playing, boolean newList) {
         mValues = items;
         initialItems = new ArrayList<>(items);
         mListener = listener;
-        this.currentlyPlaying = currentlyPlaying;
+        this.currentlyPlaying = playing;
+        this.newList = newList;
     }
 
     @Override
@@ -85,6 +88,7 @@ public class SongViewAdapter extends RecyclerView.Adapter<SongViewAdapter.ViewHo
         public final TextView mAuthor;
         public final TextView mVotes;
         public final LinearLayout voteContainer;
+        public final CheckBox chkAdd;
         public Song mItem;
 
         public ViewHolder(View view) {
@@ -94,7 +98,7 @@ public class SongViewAdapter extends RecyclerView.Adapter<SongViewAdapter.ViewHo
             mAuthor = (TextView) view.findViewById(R.id.txtSongAuthor);
             mVotes = (TextView) view.findViewById(R.id.txtVote);
             voteContainer = (LinearLayout) view.findViewById(R.id.voteLayout);
-
+            chkAdd = (CheckBox) view.findViewById(R.id.chkAdd);
             Button mUp = (Button) view.findViewById(R.id.btnVoteUp);
             Button mDown = (Button) view.findViewById(R.id.btnVoteDown);
             mUp.setOnClickListener(new View.OnClickListener() {
@@ -125,8 +129,18 @@ public class SongViewAdapter extends RecyclerView.Adapter<SongViewAdapter.ViewHo
             mTitle.setText(mItem.getTitle());
             mAuthor.setText(mItem.getAuthor());
             mVotes.setText(""+mItem.getVotes());
-            if(!mItem.isInCurrentlyPlaying()){
+            if(!mItem.isInCurrentlyPlaying() || newList){
                 voteContainer.setVisibility(View.GONE);
+            }
+            if(newList){
+                chkAdd.setVisibility(View.VISIBLE);
+                chkAdd.setChecked(mItem.isChecked());
+                chkAdd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mItem.setChecked(chkAdd.isChecked());
+                    }
+                });
             }
         }
     }

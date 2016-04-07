@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -40,13 +41,18 @@ public class SongFragment extends Fragment implements Searchable {
     private TextView txtCurrentTime;
     private ProgressBar progressBar;
     private IncrementPlaying ip;
+    private TextView txtPlaylistName;
+    private boolean newList;
+    private DoneListener donePlaylistListener;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public SongFragment() {
     }
-
+    public interface DoneListener{
+       void onDoneMakingPlaylist(PlayList newPlaylist);
+    }
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static SongFragment newInstance(int columnCount) {
@@ -73,7 +79,17 @@ public class SongFragment extends Fragment implements Searchable {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_song_list2, container, false);
         View rv = view.findViewById(R.id.list);
+        txtPlaylistName = (TextView)view.findViewById(R.id.txtPlaylistName);
+        Button btnDone = (Button)view.findViewById(R.id.btnAddDone);
+        btnDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SongFragment.this.doneMakingNewPlaylist();
+            }
+        });
+
         if(currentlyPlaying){
+            txtPlaylistName.setText("Currently Playing");
             Song s = PlayListStructure.ITEM_MAP.get("-1").getTopThree().get(1);
             TextView name = (TextView) view.findViewById(R.id.txtSongName);
             TextView end = (TextView) view.findViewById(R.id.txtEndTime);
@@ -99,7 +115,12 @@ public class SongFragment extends Fragment implements Searchable {
             }
             ip = new IncrementPlaying();
             ip.execute(new TaskParams(currentSec, currentMin, progressBar.getProgress(), endSec, endMin));
+        }else if(newList){
+            txtPlaylistName.setText("New Playlist");
+            btnDone.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.nowPlayingView).setVisibility(View.GONE);
         }else{
+            txtPlaylistName.setText(playlist.title);
             view.findViewById(R.id.nowPlayingView).setVisibility(View.GONE);
         }
         // Set the adapter
@@ -111,12 +132,32 @@ public class SongFragment extends Fragment implements Searchable {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            SongStructure.SEARCHED_ITEMS.clear();
-            SongStructure.SEARCHED_ITEMS.addAll(playlist.getSongs());
-            adapter = new SongViewAdapter(SongStructure.SEARCHED_ITEMS, mListener, currentlyPlaying);
+            if(newList){
+                SongStructure.SEARCHED_ITEMS.clear();
+                SongStructure.SEARCHED_ITEMS.addAll(SongStructure.ITEMS);
+                for(Song s : SongStructure.SEARCHED_ITEMS){
+                    s.setChecked(false);
+                }
+            }else {
+                SongStructure.SEARCHED_ITEMS.clear();
+                SongStructure.SEARCHED_ITEMS.addAll(playlist.getSongs());
+            }
+            adapter = new SongViewAdapter(SongStructure.SEARCHED_ITEMS, mListener, currentlyPlaying, newList);
             recyclerView.setAdapter(adapter);
         }
         return view;
+    }
+
+    private void doneMakingNewPlaylist() {
+        PlayList pl = new PlayList("","");
+        pl.songs.clear();
+        for(Song s : SongStructure.ITEMS){
+            if(s.isChecked()){
+                pl.songs.add(s);
+            }
+        }
+        if(donePlaylistListener != null)
+            donePlaylistListener.onDoneMakingPlaylist(pl);
     }
 
 
@@ -140,9 +181,11 @@ public class SongFragment extends Fragment implements Searchable {
         }
     }
 
-    public void setPlaylist(PlayList item, boolean b) {
+    public void setPlaylist(PlayList item, boolean currentlyPlaying, boolean newList, DoneListener listener) {
         this.playlist = item;
-        this.currentlyPlaying = b;
+        this.currentlyPlaying = currentlyPlaying;
+        this.newList = newList;
+        this.donePlaylistListener = listener;
     }
 
     /**

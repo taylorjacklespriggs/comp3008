@@ -52,6 +52,7 @@
             android:id="@+id/chkAdd"
             android:layout_gravity="center"
             android:visibility="gone"
+            android:text="@string/addme"
             android:layout_marginBottom="10dp"/>
 
         <LinearLayout

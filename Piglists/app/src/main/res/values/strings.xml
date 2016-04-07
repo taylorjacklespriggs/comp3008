@@ -35,4 +35,5 @@
     <string name="joinedDialogConfirm">You have joined an event. Enjoy!</string>
     <string name="selectPlaylist">Select a playlist for your event</string>
     <string name="requestSong">Request Song</string>
+    <string name="addme">Add me!</string>
 </resources>

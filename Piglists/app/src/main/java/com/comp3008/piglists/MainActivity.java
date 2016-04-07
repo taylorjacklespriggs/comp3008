@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -143,6 +145,9 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         isConnected = false;
+                        sideMenu.findItem(R.id.nav_now_playing).setEnabled(false);
+                        sideMenu.findItem(R.id.nav_manage_guests).setEnabled(false);
+                        sideMenu.findItem(R.id.nav_join_event).setEnabled(true);
                         dialog.dismiss();
                     }
                 });
@@ -252,10 +257,53 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_new_playlist) {
             inCurrentlyPlaying = false;
+            SongFragment frag = new SongFragment();
 
+            frag.setPlaylist(new PlayList("", ""), false, true, new SongFragment.DoneListener() {
+                @Override
+                public void onDoneMakingPlaylist(final PlayList newPlaylist) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("Give your playlist a name");
+
+
+                    final EditText input = new EditText(MainActivity.this);
+                    input.setInputType(InputType.TYPE_CLASS_TEXT );
+                    builder.setView(input);
+
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String m_Text = input.getText().toString();
+                            if (m_Text != null && !m_Text.trim().equals("")){
+                                newPlaylist.setTitle(m_Text);
+                                newPlaylist.setId(m_Text);
+                                PlayListStructure.ITEMS.add(newPlaylist);
+                                PlayListStructure.ITEM_MAP.put(newPlaylist.id, newPlaylist);
+                                SongFragment frag = new SongFragment();
+                                frag.setPlaylist(newPlaylist, false, false, null);
+                                MainActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, frag).addToBackStack("")
+                                        .commit();
+                                currentFragment = frag;
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
+                }
+            });
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, frag)
+                    .addToBackStack("").commit();
+            currentFragment = frag;
         } else if (id == R.id.nav_now_playing) {
             SongFragment frag = new SongFragment();
-            frag.setPlaylist(PlayListStructure.ITEM_MAP.get("-1"), true);
+            frag.setPlaylist(PlayListStructure.ITEM_MAP.get("-1"), true, false, null);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, frag)
                     .addToBackStack("").commit();
             currentFragment = frag;
@@ -269,7 +317,7 @@ public class MainActivity extends AppCompatActivity
     public void onListFragmentInteraction(PlayList item){
         if(!pickingPlaylist) {
             SongFragment songFragment = new SongFragment();
-            songFragment.setPlaylist(item, false);
+            songFragment.setPlaylist(item, false, false, null);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, songFragment)
                     .addToBackStack("").commit();
             currentFragment = songFragment;
@@ -281,7 +329,7 @@ public class MainActivity extends AppCompatActivity
             }
             PlayListStructure.ITEM_MAP.put("-1", currentlyplaying);
             SongFragment songFragment = new SongFragment();
-            songFragment.setPlaylist(currentlyplaying, true);
+            songFragment.setPlaylist(currentlyplaying, true, false, null);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, songFragment)
                     .addToBackStack("").commit();
             currentFragment = songFragment;

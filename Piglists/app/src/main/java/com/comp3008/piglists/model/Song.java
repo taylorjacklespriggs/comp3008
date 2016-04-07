@@ -16,6 +16,8 @@ public class Song {
     private TextView voteView;
     private boolean currentlyPlaying = false;
     private int voteCount;
+    private boolean checked;
+
     public Song(){
 
     }
@@ -68,5 +70,13 @@ public class Song {
 
     public String toString(){
         return "Title: " + title + " author: " + author + " genre: " + genre + "votes: " + votes;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
+
+    public boolean isChecked() {
+        return checked;
     }
 }

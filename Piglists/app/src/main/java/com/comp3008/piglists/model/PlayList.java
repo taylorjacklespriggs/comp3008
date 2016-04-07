@@ -51,4 +51,10 @@ public class PlayList {
     public String toString(){
         return "Playlist: " + title + "Songs: " + songs;
     }
+    public void setTitle(String title){
+        this.title = title;
+    }
+    public void setId(String id){
+        this.id = id;
+    }
 }
