@@ -46,6 +46,14 @@
                 android:layout_gravity="bottom" />
         </LinearLayout>
 
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/chkAdd"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_marginBottom="10dp"/>
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
@@ -62,6 +70,8 @@
                 android:id="@+id/btnVoteUp"
                 android:background="#00ffffff"
                 android:layout_gravity="center|right" />
+
+
 
             <TextView
                 android:layout_width="wrap_content"

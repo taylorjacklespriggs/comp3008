@@ -252,6 +252,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_new_playlist) {
             inCurrentlyPlaying = false;
+
         } else if (id == R.id.nav_now_playing) {
             SongFragment frag = new SongFragment();
             frag.setPlaylist(PlayListStructure.ITEM_MAP.get("-1"), true);
