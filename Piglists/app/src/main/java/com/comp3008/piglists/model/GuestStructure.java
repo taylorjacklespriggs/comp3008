@@ -44,5 +44,6 @@ public class GuestStructure {
     public static void removeItem(Guest item) {
         ITEMS.remove(item);
         ITEM_MAP.remove(item.id);
+        SEARCHED_ITEMS.remove(item);
     }
 }

@@ -280,6 +280,7 @@ public class MainActivity extends AppCompatActivity
                                 newPlaylist.setId(m_Text);
                                 PlayListStructure.ITEMS.add(newPlaylist);
                                 PlayListStructure.ITEM_MAP.put(newPlaylist.id, newPlaylist);
+                                PlayListStructure.SEARCHED_ITEMS.add(newPlaylist);
                                 SongFragment frag = new SongFragment();
                                 frag.setPlaylist(newPlaylist, false, false, null);
                                 MainActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, frag).addToBackStack("")
